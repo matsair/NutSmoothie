@@ -1,4 +1,4 @@
-# NutSmoothie
+# Nut Smoothie
 
 Awesome location-based reminders.
 

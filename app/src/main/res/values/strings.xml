@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Nut Smoothie</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Main Screen -->
+    <string name="btn_main_get_map">Get Map</string>
+
+    <!-- Map -->
+    <string name="txt_map_screen">Select Location</string>
+    <string name="btn_map_getlocation_Button">Save Location</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

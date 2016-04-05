@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Google_Map"/>
+        <activity android:name=".Map.Google_Map"/>
 
         <uses-library android:name="com.google.android.maps" />
         <!--

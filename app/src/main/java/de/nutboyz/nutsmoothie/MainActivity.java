@@ -1,20 +1,23 @@
 package de.nutboyz.nutsmoothie;
 
-import android.app.Activity;
-import android.content.Context;
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+
+import de.nutboyz.nutsmoothie.Map.Google_Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,12 +30,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         get_map = (Button) findViewById(R.id.btn_main_getMap);
         get_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 Intent intent = new Intent(MainActivity.this,Google_Map.class);
-                 startActivity(intent);
+                if(checkPermissions()) {
+                    Intent intent = new Intent(MainActivity.this, Google_Map.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -66,5 +72,65 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /***
+     * Checks if the permissions are given
+     *
+     * @return
+     */
+    public boolean checkPermissions() {
+        //Check Permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this , Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //Request Permission if not granted
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET}, 10);
+
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    /***
+     * Check the result of the requested permissions
+     *
+     * @param requestCode
+     * @param permission
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //call the onClick method of the button if permissions are granted
+
+                } else {
+                    //create AlertDialog
+                    AlertDialog.Builder myDialog = new AlertDialog.Builder(getApplicationContext());
+                    myDialog.setTitle("No GPS")
+                            .setMessage("Without GPS permission, we cannot determine the current Location.")
+                            .setNegativeButton("No Permission", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton("Give Permission", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    checkPermissions();
+                                    dialog.cancel();
+                                }
+                            })
+                            .create().show();
+                }
+        }
     }
 }

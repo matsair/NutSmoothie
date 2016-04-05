@@ -9,8 +9,10 @@
     <string name="txt_map_screen">Select Location</string>
     <string name="btn_map_getlocation_Button">Save Location</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Input Dialog -->
+    <string name="inpDialog_Text">Please specify the name of your selected location:</string>
+    <string name="inpDialog_Cancel">Cancel</string>
+    <string name="inpDialog_OK">Ok</string>
 
 
 </resources>

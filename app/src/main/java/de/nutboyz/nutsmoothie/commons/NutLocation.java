@@ -4,7 +4,7 @@ package de.nutboyz.nutsmoothie.commons;
  * Location class.
  * @author Mats
  */
-public class Location {
+public class NutLocation {
 
     private int id;
     private String name;

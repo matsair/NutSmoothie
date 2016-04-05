@@ -10,7 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.nutboyz.nutsmoothie.commons.Location;
+import de.nutboyz.nutsmoothie.commons.NutLocation;
 
 /**
  * Contains methods for location data in database.
@@ -52,7 +52,7 @@ public class LocationDataSource {
      * @param location The location to be added to the database.
      * @return The location added to the database, with ID
      */
-    public Location addLocation(Location location) {
+    public NutLocation addLocation(NutLocation location) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_NAME, location.getName());
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LATITUDE, location.getLatitude());
@@ -62,7 +62,7 @@ public class LocationDataSource {
                 allColumns, MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
-        Location newLocation = cursorToLocation(cursor);
+        NutLocation newLocation = cursorToLocation(cursor);
         cursor.close();
         return newLocation;
     }
@@ -71,7 +71,7 @@ public class LocationDataSource {
      * Deletes the location from the database. Checks for id.
      * @param location Location to be deleted.
      */
-    public void deleteLocation(Location location) {
+    public void deleteLocation(NutLocation location) {
         int locId = location.getId();
         database.delete(MySQLiteHelper.TABLE_LOCATIONS, MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID
                 + " = " + locId, null);
@@ -82,15 +82,15 @@ public class LocationDataSource {
      * Returns a list of all locations in the database.
      * @return List of Locations
      */
-    public List<Location> getAllLocations() {
-        List<Location> locations = new ArrayList<>();
+    public ArrayList<NutLocation> getAllLocations() {
+        ArrayList<NutLocation> locations = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATIONS,
                 allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Location location = cursorToLocation(cursor);
+            NutLocation location = cursorToLocation(cursor);
             locations.add(location);
             cursor.moveToNext();
         }
@@ -104,13 +104,13 @@ public class LocationDataSource {
      * @param id
      * @return Location
      */
-    public Location getLocationFromId(int id) {
+    public NutLocation getLocationFromId(int id) {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATIONS,
                 allColumns, MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + " = " + id,
                 null, null, null, null);
 
         cursor.moveToFirst();
-        Location location = cursorToLocation(cursor);
+        NutLocation location = cursorToLocation(cursor);
 
         cursor.close();
         return location;
@@ -121,8 +121,8 @@ public class LocationDataSource {
      * @param idList List of location IDs to get
      * @return List of Locations corresponding to given IDs.
      */
-    public List<Location> getLocationsFromIntList(List<Integer> idList) {
-        List<Location> locationList = new ArrayList<>();
+    public List<NutLocation> getLocationsFromIntList(List<Integer> idList) {
+        List<NutLocation> locationList = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATIONS,
                 allColumns, null, null, null, null, null);
@@ -130,7 +130,7 @@ public class LocationDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             if (idList.contains(cursor.getInt(0))) {
-                Location location = cursorToLocation(cursor);
+                NutLocation location = cursorToLocation(cursor);
                 locationList.add(location);
             }
             cursor.moveToNext();
@@ -140,8 +140,8 @@ public class LocationDataSource {
         return locationList;
     }
 
-    private Location cursorToLocation(Cursor cursor) {
-        Location location = new Location();
+    private NutLocation cursorToLocation(Cursor cursor) {
+        NutLocation location = new NutLocation();
         location.setId(cursor.getInt(0));
         location.setName(cursor.getString(1));
         location.setLatitude(cursor.getDouble(2));

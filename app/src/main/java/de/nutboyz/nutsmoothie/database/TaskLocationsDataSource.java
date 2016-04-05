@@ -10,7 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.nutboyz.nutsmoothie.commons.Location;
+import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.commons.Task;
 
 /**
@@ -50,7 +50,7 @@ public class TaskLocationsDataSource {
      * @param task
      * @param location
      */
-    public void addLocationToTask(Task task, Location location) {
+    public void addLocationToTask(Task task, NutLocation location) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.TABLE_TASKLOCATIONS_COLUMN_TASK_ID, task.getId());
         values.put(MySQLiteHelper.TABLE_TASKLOCATIONS_COLUMN_LOCATION_ID, location.getId());
@@ -62,7 +62,7 @@ public class TaskLocationsDataSource {
      * @param task
      * @param location
      */
-    public void deleteLocationFromTask(Task task, Location location) {
+    public void deleteLocationFromTask(Task task, NutLocation location) {
         int locId = location.getId();
         database.delete(MySQLiteHelper.TABLE_TASKLOCATIONS,
                 MySQLiteHelper.TABLE_TASKLOCATIONS_COLUMN_LOCATION_ID

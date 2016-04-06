@@ -15,25 +15,26 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
 
+import de.nutboyz.nutsmoothie.GPS.gpsService;
 import de.nutboyz.nutsmoothie.R;
 import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.database.LocationDataSource;
@@ -57,6 +58,20 @@ public class Google_Map extends AppCompatActivity
      */
     private GoogleApiClient client;
 
+
+    //ServiceConnection for the service
+    private ServiceConnection GpsService = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //GeoServiceBinder binder = (GeoServiceBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +91,11 @@ public class Google_Map extends AppCompatActivity
     public void onMapReady(GoogleMap map) {
         try {
             this.google_map = map;
+
+            bindService(new Intent(getApplicationContext(),gpsService.class)
+                    ,GpsService,
+                    Context.BIND_AUTO_CREATE);
+
             loadLocations();
             //Set Listener
             google_map.setOnMapLongClickListener(this);
@@ -103,14 +123,14 @@ public class Google_Map extends AppCompatActivity
                 google_map.setMyLocationEnabled(true);
             }
 
-            //Get Location Manager
+           /* //Get Location Manager
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             locationListener = new LocationListener() {
-                /***
+                *//***
                  * Handle Location Change Event
                  *
                  * @param location
-                 */
+                 *//*
                 @Override
                 public void onLocationChanged(Location location) {
                     try {
@@ -146,7 +166,7 @@ public class Google_Map extends AppCompatActivity
                 public void onProviderDisabled(String provider) {
 
                 }
-            };
+            };*/
         } catch (Exception e) {
             e.getMessage();
         }
@@ -242,12 +262,13 @@ public class Google_Map extends AppCompatActivity
     public boolean onMyLocationButtonClick() {
         try {
             if (checkPermissions()) {
+                locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                 if(locationManager.getLastKnownLocation("gps") != null) {
                     LatLng new_position = new LatLng(locationManager.getLastKnownLocation("gps").getLatitude(),
                             locationManager.getLastKnownLocation("gps").getLongitude());
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(new_position)
-                            .zoom(20)
+                            .zoom(18)
                             .bearing(180)
                             .tilt(0)
                             .build();

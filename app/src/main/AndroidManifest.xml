@@ -30,6 +30,7 @@
         </activity>
 
         <activity android:name=".Map.Google_Map"/>
+        <service android:name=".GPS.gpsService"/>
 
         <uses-library android:name="com.google.android.maps" />
         <!--

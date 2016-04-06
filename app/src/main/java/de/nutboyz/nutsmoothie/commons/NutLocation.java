@@ -1,5 +1,7 @@
 package de.nutboyz.nutsmoothie.commons;
 
+import android.location.Location;
+
 /**
  * Location class.
  * @author Mats
@@ -29,6 +31,13 @@ public class NutLocation {
 
     public double getLatitude() {
         return latitude;
+    }
+
+    public Location getLocation() {
+        Location location = new Location("");
+        location.setLongitude(this.longitude);
+        location.setLatitude(this.latitude);
+        return location;
     }
 
     public void setLatitude(double latitude) {

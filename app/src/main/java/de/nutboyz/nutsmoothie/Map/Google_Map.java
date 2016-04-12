@@ -47,7 +47,6 @@ public class Google_Map extends AppCompatActivity
         implements OnMapReadyCallback, OnMapLongClickListener, OnMyLocationButtonClickListener,inputDialog_Interface {
 
     private LocationManager locationManager;
-    private LocationListener locationListener;
     private Button btn_save_location;
     private GoogleMap google_map;
     private Marker last_marker;
@@ -119,54 +118,9 @@ public class Google_Map extends AppCompatActivity
             google_map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
             //Set current Location
-            if (checkPermissions()) {
-                google_map.setMyLocationEnabled(true);
-            }
+            int check = checkCallingOrSelfPermission("gps");
+            google_map.setMyLocationEnabled(true);
 
-           /* //Get Location Manager
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-                *//***
-                 * Handle Location Change Event
-                 *
-                 * @param location
-                 *//*
-                @Override
-                public void onLocationChanged(Location location) {
-                    try {
-                        LatLng new_position = new LatLng(location.getLatitude(), location.getLongitude());
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(new_position)
-                                .zoom(20)
-                                .bearing(180)
-                                .tilt(0)
-                                .build();
-                        //add marker with the current location
-                        google_map.addMarker(new MarkerOptions()
-                                .position(new_position)
-                                .title("Current Location"));
-                        google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
-
-                    } catch (Exception e) {
-                        e.getMessage();
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            };*/
         } catch (Exception e) {
             e.getMessage();
         }
@@ -199,48 +153,6 @@ public class Google_Map extends AppCompatActivity
         }
     }
 
-    /***
-     * Checks if the permissions are given
-     *
-     * @return
-     */
-    private boolean checkPermissions() {
-        //Check Permissions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                //Request Permission if not granted
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET}, 10);
-
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return true;
-    }
-
-    /***
-     * Check the result of the requested permissions
-     *
-     * @param requestCode
-     * @param permission
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResults) {
-        switch (requestCode) {
-            case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //call the onClick method of the button if permissions are granted
-
-                } else {
-                    // ToDo create AlertDialog
-                }
-        }
-    }
 
     /***
      * Long Click Handler for the map
@@ -261,7 +173,7 @@ public class Google_Map extends AppCompatActivity
     @Override
     public boolean onMyLocationButtonClick() {
         try {
-            if (checkPermissions()) {
+                int check = checkCallingOrSelfPermission("gps");
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                 if(locationManager.getLastKnownLocation("gps") != null) {
                     LatLng new_position = new LatLng(locationManager.getLastKnownLocation("gps").getLatitude(),
@@ -294,7 +206,7 @@ public class Google_Map extends AppCompatActivity
                             .create()
                             .show();*/
                 }
-            }
+
         }catch (Exception e)
         {
             e.getMessage();

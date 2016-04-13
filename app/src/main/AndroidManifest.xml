@@ -30,6 +30,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LocationListActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:label="@string/location_list_title"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity android:name=".Map.Google_Map"/>
         <service android:name=".GPS.gpsService"/>
 

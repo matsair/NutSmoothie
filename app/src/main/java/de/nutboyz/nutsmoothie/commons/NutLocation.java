@@ -13,6 +13,13 @@ public class NutLocation {
     private double latitude;
     private double longitude;
 
+    public NutLocation(String name) {
+        this.name = name;
+    }
+
+    public NutLocation() {
+    }
+
     public int getId() {
         return id;
     }
@@ -54,15 +61,16 @@ public class NutLocation {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("name: ");
-        sb.append(name);
-        sb.append(", latitude: ");
-        sb.append(latitude);
-        sb.append(", longitude: ");
-        sb.append(longitude);
-        sb.append(", locationid: ");
-        sb.append(id);
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("name: ");
+//        sb.append(name);
+//        sb.append(", latitude: ");
+//        sb.append(latitude);
+//        sb.append(", longitude: ");
+//        sb.append(longitude);
+//        sb.append(", locationid: ");
+//        sb.append(id);
+//        return sb.toString();
+        return name;
     }
 }

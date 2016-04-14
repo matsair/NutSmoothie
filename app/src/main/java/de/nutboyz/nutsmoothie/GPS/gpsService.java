@@ -11,6 +11,8 @@ import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -153,7 +155,10 @@ public class gpsService extends Service {
                     builder.setContentTitle(title)
                             .setColor(color)
                             .setSmallIcon(icon)
-                            .setContentText(text);
+                            .setContentText(text)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setVibrate(new long[] {1000,1000});
                     Intent resultIntent = new Intent(this, Google_Map.class);
 
                     // Because clicking the notification opens a new ("special") activity, there's

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/view_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Task" />
+
+    <EditText
+        android:id="@+id/newtask_edtext_task"
+        android:layout_width="329dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/task_list"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="Name of New Task"
+        android:text="" />
+
+    <TextView
+        android:layout_width="324dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Range in meter:"
+        android:id="@+id/newtask_text_range" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/newtask_seek"
+        android:max="500"
+        android:layout_gravity="center_horizontal" />
+
+    <ListView
+        android:id="@+id/newtask_liview_loc_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/newtask_btn_cancel"
+        android:layout_width="102dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newtask_liview_loc_list"
+        android:layout_marginTop="113dp"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/newtask_btn_addLoc"
+        android:layout_width="102dp"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/newtask_btn_cancel"
+        android:text="add Location" />
+
+    <Button
+        android:id="@+id/newtask_btn_save"
+        android:layout_width="102dp"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/newtask_btn_addLoc"
+        android:text="Save" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/newtask_textview"
+        android:layout_gravity="center_horizontal" />
+
+
+</LinearLayout>

@@ -15,17 +15,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +41,8 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import de.nutboyz.nutsmoothie.GPS.gpsService;
 import de.nutboyz.nutsmoothie.R;
@@ -47,10 +57,15 @@ public class Google_Map extends AppCompatActivity
         implements OnMapReadyCallback, OnMapLongClickListener, OnMyLocationButtonClickListener,inputDialog_Interface {
 
     private LocationManager locationManager;
+    private Location lastLocation;
     private Button btn_save_location;
     private GoogleMap google_map;
     private Marker last_marker;
     private ArrayList<NutLocation> selectedLocations;
+    private IntentFilter mIntentFilter;
+    static public final String mBroadcastDialog = "de.nutboyz.nutsmoothie.string";
+    static public final String mNewLocation = "de.nutboyz.nutsmoothie.newLocation";
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -58,11 +73,14 @@ public class Google_Map extends AppCompatActivity
     private GoogleApiClient client;
 
 
-    //ServiceConnection for the service
+    /***
+     * The Service connection for retrieving the GPS Location
+     * @Author: Jan
+     */
     private ServiceConnection GpsService = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            //GeoServiceBinder binder = (GeoServiceBinder) service;
+
         }
 
         @Override
@@ -71,10 +89,86 @@ public class Google_Map extends AppCompatActivity
         }
     };
 
+
+    /***
+     * Broadcast Receiver to receive the provider disabled message
+     * @Autho: Jan
+     */
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                if (intent.getAction().equals(mBroadcastDialog)) {
+                    AlertDialog.Builder noProvider = new AlertDialog.Builder(context);
+                    noProvider.setTitle("No GPS Provider enabled")
+                            .setMessage("In order to receive location updates, you need to enable the GPS provider.")
+                            .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent2 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent2);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+                else if(intent.getAction().equals(mNewLocation))
+                {
+                    double[] coordinates = intent.getDoubleArrayExtra("GPS");
+                    LatLng new_position = new LatLng(coordinates[1],coordinates[0]);
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new_position)
+                            .zoom(18)
+                            .bearing(180)
+                            .tilt(0)
+                            .build();
+                    google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
+                }
+
+            } catch (Exception e) {
+                e.getMessage();
+            }
+        }
+    };
+
     @Override
+    /***
+     * Register BroadcastReceiver again to check GPS status
+     * @Author: Jan
+     */
+    public void onResume() {
+        super.onResume();
+        registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    /***
+     * Unregister BroadcastReceiver
+     * @Author: Jan
+     */
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mReceiver);
+        super.onPause();
+    }
+
+    @Override
+    /***
+     * Creates the Broadcastreceiver
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcastDialog);
+        mIntentFilter.addAction(mNewLocation);
 
         //Start Map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -90,6 +184,7 @@ public class Google_Map extends AppCompatActivity
     public void onMapReady(GoogleMap map) {
         try {
             this.google_map = map;
+
 
             bindService(new Intent(getApplicationContext(),gpsService.class)
                     ,GpsService,
@@ -128,10 +223,10 @@ public class Google_Map extends AppCompatActivity
 
     /***
      * Loads all the stored locations out of the database and marks them on the map
+     * @Author: Jan
      */
     private void loadLocations() {
         try {
-            //ToDo: Load Locations from the database and mark them on the card
             selectedLocations = new ArrayList<NutLocation>();
             LocationDataSource database = new LocationDataSource(getApplicationContext());
             database.open();
@@ -155,13 +250,13 @@ public class Google_Map extends AppCompatActivity
 
 
     /***
-     * Long Click Handler for the map
-     *
+     * Long Click Handler for the map, sets the marker
      * @param point
+     * @Author: Jan
      */
     @Override
     public void onMapLongClick(LatLng point) {
-        //ToDo: Handling of the selected Location
+
         last_marker = google_map.addMarker(new MarkerOptions()
                 .position(point)
                 .title("Selected Location"));
@@ -169,6 +264,7 @@ public class Google_Map extends AppCompatActivity
 
     /***
      * Just moving from the map position to the last gps position
+     * @Author: Jan
      */
     @Override
     public boolean onMyLocationButtonClick() {
@@ -199,9 +295,10 @@ public class Google_Map extends AppCompatActivity
                     google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
                 }else
                 {
-                    //AlertDialog.Builder noLocationDialog = new AlertDialog.Builder(getApplicationContext());
-                    /*noLocationDialog.setTitle("No Location")
-                            .setMessage("Unfortunately, there is not GPS fix available.")
+                    /*
+                    AlertDialog.Builder noLocationDialog = new AlertDialog.Builder(this);
+                    noLocationDialog.setTitle("No Location")
+                            .setMessage("Unfortunately, there is no GPS fix available.")
                             .setNeutralButton("OK",null)
                             .create()
                             .show();*/

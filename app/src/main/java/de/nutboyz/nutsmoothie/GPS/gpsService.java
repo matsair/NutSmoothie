@@ -1,14 +1,18 @@
 package de.nutboyz.nutsmoothie.GPS;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -17,11 +21,8 @@ import android.location.LocationProvider;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,91 +40,99 @@ public class gpsService extends Service {
     private LocationListener locationListener;
     private LocationManager locationManager;
     private Location lastLocation;
-    private String provider;
-    private int notifNumber;
+    private int locationRange = 200; //Range when Notification is sent out
+    private String locprovider;
     private ArrayList<NutLocation> nutLocations;
-    private static final int MIN_ZEIT = 1000*60*2; //2 Min
-    private static final int MIN_DISTANZ = 10; // oder 10 Meter
+    private static final int MIN_ZEIT = 1000*10; //2 Min
+    private static final int MIN_DISTANZ = 100; // or 100 Meter
     private final IBinder mGpsBinder = new GeoServiceBinder();
+    private boolean debug = true;
+    private Intent mBroadcastReceiver;
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
-    @Override
+    /***
+     * Starts the location listener and selects the best provider
+     * @author: Jan
+     */
     public void onCreate() {
         try {
             super.onCreate();
-            notifNumber = 0;
+
+            mBroadcastReceiver = new Intent();
+            mBroadcastReceiver.setAction(Google_Map.mBroadcastDialog);
+            mBroadcastReceiver.setAction(Google_Map.mNewLocation);
             //load all the stored nutLocations
             loadLocations();
 
             //selects the provider
             selectProvider();
-            int check = checkCallingOrSelfPermission(provider);
+            int check = checkCallingOrSelfPermission(locprovider);
 
             //retrieve the last known location
-            if (lastLocation == null && locationManager.getLastKnownLocation(provider) != null) {
-                lastLocation = locationManager.getLastKnownLocation(provider);
+            if (lastLocation == null && locationManager.getLastKnownLocation(locprovider) != null) {
+                lastLocation = locationManager.getLastKnownLocation(locprovider);
             }
+
+            //locationListener zum Abfragen der Position
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    Toast.makeText(gpsService.this, "Accurancy: " + location.getAccuracy(), Toast.LENGTH_SHORT).show();
-
+                    if(debug) {
+                        Toast.makeText(gpsService.this, "Accurancy: " + location.getAccuracy(), Toast.LENGTH_SHORT).show();
+                    }
                     //Check new location
                     if (isBetterLocation(location, lastLocation)) {
                         evaluateLocation(location);
+                        mBroadcastReceiver.setAction(Google_Map.mNewLocation);
+                        mBroadcastReceiver.putExtra("GPS",new double[] {location.getLongitude(),location.getLatitude()});
+                        sendBroadcast(mBroadcastReceiver);
                     }
                 }
 
                 @Override
                 public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                    if (status == LocationProvider.OUT_OF_SERVICE) {
-                        Toast.makeText(gpsService.this, "new Status:  OUT_OF_SERVICE and provider " + provider, Toast.LENGTH_SHORT).show();
-                    } else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-                        Toast.makeText(gpsService.this, "new Status:  TEMPORARILY_UNAVAILABE and provider " + provider, Toast.LENGTH_SHORT).show();
-                    } else if (status == LocationProvider.AVAILABLE) {
-                        Toast.makeText(gpsService.this, "new Status:  AVAILABLE and provider " + provider, Toast.LENGTH_SHORT).show();
+                    //test
+                    if(debug) {
+                        if (status == LocationProvider.OUT_OF_SERVICE) {
+                            Toast.makeText(gpsService.this, "new Status:  OUT_OF_SERVICE and provider " + provider, Toast.LENGTH_SHORT).show();
+                        } else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
+                            Toast.makeText(gpsService.this, "new Status:  TEMPORARILY_UNAVAILABE and provider " + provider, Toast.LENGTH_SHORT).show();
+                        } else if (status == LocationProvider.AVAILABLE) {
+                            Toast.makeText(gpsService.this, "new Status:  AVAILABLE and provider " + provider, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
                 @Override
                 public void onProviderEnabled(String provider) {
-                    Toast.makeText(gpsService.this, "Provider enabled", Toast.LENGTH_SHORT).show();
+                    if(debug) {
+                        Toast.makeText(gpsService.this, "Provider enabled", Toast.LENGTH_SHORT).show();
+                    }
+                    //wähle neuen provider
+                    selectProvider();
+                    int check = checkCallingOrSelfPermission(locprovider);
+                    //starte location tracking
+                    locationManager.requestLocationUpdates(locprovider, MIN_ZEIT, MIN_DISTANZ, locationListener);
                 }
 
                 @Override
-                public void onProviderDisabled(String provider) {
-                    final AlertDialog.Builder noDeviceDialog = new AlertDialog.Builder(getApplicationContext());
-                    noDeviceDialog.setTitle("No GPS Provider")
-                            .setMessage("You need to enable the GPS provider in order to get new locations.")
-                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                dialog.dismiss();
-                                }
-                            })
-                            .setPositiveButton("Enable GPS Provider", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                    dialog.dismiss();
-                                }
-                            })
-                            .create()
-                            .show();
+                public void onProviderDisabled(final String provider) {
+                    try {
+                        mBroadcastReceiver.setAction(Google_Map.mBroadcastDialog);
+                        sendBroadcast(mBroadcastReceiver);
+                    } catch (Exception e)
+                    {
+                        e.getMessage();
+                    }
                 }
             };
-            locationManager.requestLocationUpdates(provider, MIN_ZEIT, MIN_DISTANZ, locationListener);
+            locationManager.requestLocationUpdates(locprovider, MIN_ZEIT, MIN_DISTANZ, locationListener);
         }catch (Exception e)
         {
             e.getMessage();
         }
     }
+
 
     /***
      * Evaluates the current locations and compares them with the locations stored in the database
@@ -135,7 +144,7 @@ public class gpsService extends Service {
             //go through all locations and collect the stored locations in the area of 10 meters
             for (int i = 0; i < nutLocations.size(); i++) {
                 double distanz = location.distanceTo(nutLocations.get(i).getLocation());
-                if (distanz <= 30) {
+                if (distanz <= locationRange) {
 
                     int color = getResources().getColor(R.color.notif_color);
                     int icon = R.drawable.ic_notif_location_reached;
@@ -146,7 +155,10 @@ public class gpsService extends Service {
                     builder.setContentTitle(title)
                             .setColor(color)
                             .setSmallIcon(icon)
-                            .setContentText(text);
+                            .setContentText(text)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setVibrate(new long[] {1000,1000});
                     Intent resultIntent = new Intent(this, Google_Map.class);
 
                     // Because clicking the notification opens a new ("special") activity, there's
@@ -160,8 +172,10 @@ public class gpsService extends Service {
 
                     builder.setContentIntent(resultPendingIntent);
                     NotificationManager mNotifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    notifNumber++;
-                    mNotifMgr.notify(notifNumber, builder.build());
+
+                    mNotifMgr.notify(nutLocations.get(i).getId(), builder.build());
+
+                    //ToDo retrieve tasks related to location, think about loc 1:n task relation
                     Toast.makeText(gpsService.this,
                             "You are reaching the location: " + nutLocations.get(i).getName() + " with accurancy of: " + location.getAccuracy() + " m"  + " and distance " +  String.valueOf(distanz),
                             Toast.LENGTH_LONG).show();
@@ -183,12 +197,12 @@ public class gpsService extends Service {
             final Criteria locationCriteria = new Criteria();
             locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
             locationCriteria.setPowerRequirement(Criteria.POWER_LOW);
-            provider = locationManager.getBestProvider(locationCriteria, true);
+            locprovider = locationManager.getBestProvider(locationCriteria, true);
             //String provider = locationManager.PASSIVE_PROVIDER;
-            if (locationManager.PASSIVE_PROVIDER.equalsIgnoreCase(provider)) {
-                provider = locationManager.PASSIVE_PROVIDER;
+            if (locationManager.PASSIVE_PROVIDER.equalsIgnoreCase(locprovider)) {
+                locprovider = locationManager.PASSIVE_PROVIDER;
             }
-            Toast.makeText(gpsService.this, "Selected provider: " + provider, Toast.LENGTH_SHORT).show();
+            Toast.makeText(gpsService.this, "Selected provider: " + locprovider, Toast.LENGTH_SHORT).show();
 
         } catch (Exception e)
         {
@@ -263,6 +277,10 @@ public class gpsService extends Service {
 
     @Nullable
     @Override
+    /***
+     * Callback if the service is created.
+     * @author: Jan
+      */
     public IBinder onBind(Intent intent) {
         return mGpsBinder;
     }

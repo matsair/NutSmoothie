@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -102,22 +103,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkPermissions() {
         //Check Permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
-                //Request Permission if not granted
-                ActivityCompat.requestPermissions(this , new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.INTERNET}, 10);
-
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {   //Request Permission if not granted
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION}, 10);
                 return false;
-            } else {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-                    //Request Permission if not granted
-                    ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.INTERNET}, 10);
-                }
             }
         }
         return true;
@@ -132,31 +122,39 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResults) {
-        switch (requestCode) {
-            case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //call the onClick method of the button if permissions are granted
-
-                } else {
-                    //create AlertDialog
-                    AlertDialog.Builder myDialog = new AlertDialog.Builder(getApplicationContext());
-                    myDialog.setTitle("No GPS")
-                            .setMessage("Without GPS permission, we cannot determine the current Location.")
-                            .setNegativeButton("No Permission", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .setPositiveButton("Give Permission", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    checkPermissions();
-                                    dialog.cancel();
-                                }
-                            })
-                            .create().show();
-                }
+        try {
+            switch (requestCode) {
+                case 10:
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        //call the onClick method of the button if permissions are granted
+                        //get_map.performClick();
+                        Intent intent = new Intent(MainActivity.this, Google_Map.class);
+                        startActivity(intent);
+                        return;
+                    } else {
+                        //create AlertDialog
+                        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+                        myDialog.setTitle("No GPS")
+                                .setMessage("Without GPS permission, we cannot determine the current Location.")
+                                .setNegativeButton("No Permission", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setPositiveButton("Give Permission", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        checkPermissions();
+                                        dialog.cancel();
+                                    }
+                                })
+                                .create().show();
+                    }
+            }
+        }catch (Exception e)
+        {
+            e.getMessage();
         }
     }
 

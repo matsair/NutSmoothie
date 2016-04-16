@@ -14,5 +14,9 @@
     <string name="inpDialog_Cancel">Cancel</string>
     <string name="inpDialog_OK">Ok</string>
 
+    <!-- NewTask Dialog -->
+    <string name="ntDialog_Text">Please specify the name of your selected location:</string>
+    <string name="ntDialog_Cancel">Cancel</string>
+    <string name="ntDialog_OK">Save</string>
 
 </resources>

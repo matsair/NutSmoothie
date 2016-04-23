@@ -1,39 +1,42 @@
 package de.nutboyz.nutsmoothie;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.nutboyz.nutsmoothie.Map.Google_Map;
+import de.nutboyz.nutsmoothie.commons.ListViewAdapter;
+import de.nutboyz.nutsmoothie.commons.Task;
+import de.nutboyz.nutsmoothie.database.TaskDataSource;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button get_map;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    private Button get_map, btn_main_addTask;
+
     private GoogleApiClient client;
+    List<Task> taskList = new ArrayList<Task>();
+    ListViewAdapter myAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,39 @@ public class MainActivity extends AppCompatActivity {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
+            TaskDataSource taskDataSource = new TaskDataSource(this);
+            taskList = taskDataSource.getAllTasks();
 
+            myAdapter = new ListViewAdapter(this,
+                    (ArrayList<Task>) taskList);
+
+            ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
+
+            listViewTasks.setAdapter(myAdapter);
+
+
+            listViewTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> a, View v, int position,
+                                        long arg3) {
+
+
+                }
+            });
+
+            btn_main_addTask = (Button) findViewById(R.id.main_button_add);
+            btn_main_addTask.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent i = new Intent(getApplicationContext(),
+                            NewTaskActivity.class);
+                    startActivity(i);
+
+                }
+            });
+
+/*
             get_map = (Button) findViewById(R.id.btn_main_getMap);
             get_map.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -66,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             // ATTENTION: This was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
             client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        */
         }
         catch (Exception e)
         {

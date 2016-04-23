@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <!-- ListRow Left sied Thumbnail image -->
+
+    <LinearLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip" >
+
+        <CheckBox android:id="@+id/main_list_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onCheckboxClicked"/>
+
+    </LinearLayout>
+
+    <!-- Task -->
+
+    <TextView
+        android:id="@+id/txtview_task_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thumbnail"
+        android:layout_marginLeft="2dip"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:textColor="#040404"
+        android:textSize="15dip"
+        android:typeface="sans" />
+
+    <!-- Task Name -->
+
+    <TextView
+        android:id="@+id/txtview_task_author"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dip"
+        android:layout_marginTop="15dip"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:textColor="#343434"
+        android:textSize="12dip"
+        android:text="Nutboy"/>
+
+
+    <!-- Distance to Task -->
+
+    <TextView
+        android:id="@+id/helper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtview_distance"
+        android:gravity="right"
+        android:layout_marginRight="50dp"
+        android:textSize="13dip"
+        android:text="distance: "
+        android:textColor="#10bcc9"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/txtview_distance"
+        android:layout_width="120dip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:gravity="right"
+        android:textColor="#10bcc9"
+        android:textSize="12dip"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/txtview_distance_km"
+        android:layout_width="120dip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:gravity="right"
+        android:textColor="#10bcc9"
+        android:textSize="12dip"
+        android:text="km"
+        android:textStyle="bold"/>
+
+</RelativeLayout>

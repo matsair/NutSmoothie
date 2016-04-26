@@ -14,6 +14,16 @@ public class Task {
 
     }
 
+    public Task(int id){
+        this.id = id;
+    }
+
+    public Task(int id, String name, int reminderRange) {
+        this.id = id;
+        this.name = name;
+        this.reminderRange = reminderRange;
+    }
+
     public Task(String name, int reminderRange) {
         this.name = name;
         this.reminderRange = reminderRange;

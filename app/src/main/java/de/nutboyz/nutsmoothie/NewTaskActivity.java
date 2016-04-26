@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.nutboyz.nutsmoothie.R;
-import de.nutboyz.nutsmoothie.commons.HomeActivity;
 import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.commons.Task;
 import de.nutboyz.nutsmoothie.database.LocationDataSource;
@@ -178,7 +177,7 @@ public class NewTaskActivity extends Activity {
 
         LocationDataSource locationDataSource = new LocationDataSource(this);
         locationDataSource.open();
-        List<NutLocation> tasks = taskLocationsDataSource.getLocationsFromIntList();
+        List<NutLocation> tasks = locationDataSource.getLocationsFromIntList(taskIdList);
         locationDataSource.close();
 
         return tasks;
@@ -186,7 +185,7 @@ public class NewTaskActivity extends Activity {
 
     public void logout() {
         Intent i = new Intent(getApplicationContext(),
-                HomeActivity.class);
+                MainActivity.class);
         i.putExtra("finish", true);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all act
         startActivity(i);

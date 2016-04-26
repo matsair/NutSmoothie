@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,9 @@ public class TaskDataSource {
     public TaskDataSource(Context context) {
         dbHelper = new MySQLiteHelper(context);
     }
+
+
+
 
     /**
      * Opens the database. Required before adding and accessing task location data.

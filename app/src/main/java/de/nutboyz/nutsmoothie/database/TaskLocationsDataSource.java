@@ -30,6 +30,8 @@ public class TaskLocationsDataSource {
         dbHelper = new MySQLiteHelper(context);
     }
 
+
+
     /**
      * Opens the database. Required before adding and accessing task location data.
      * @throws SQLException

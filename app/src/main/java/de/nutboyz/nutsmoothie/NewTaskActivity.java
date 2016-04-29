@@ -2,17 +2,14 @@ package de.nutboyz.nutsmoothie;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.Toolbar;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -22,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.nutboyz.nutsmoothie.R;
 import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.commons.Task;
 import de.nutboyz.nutsmoothie.database.LocationDataSource;
@@ -51,7 +47,7 @@ public class NewTaskActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+            setContentView(R.layout.newtask_activity);
             //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             // setSupportActionBar(toolbar);
 

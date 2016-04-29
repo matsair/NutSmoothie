@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,8 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -28,8 +29,6 @@ import de.nutboyz.nutsmoothie.database.TaskDataSource;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button get_map, btn_main_addTask;
-
     private GoogleApiClient client;
     List<Task> taskList = new ArrayList<Task>();
     ListViewAdapter myAdapter;
@@ -37,73 +36,45 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-            TaskDataSource taskDataSource = new TaskDataSource(this);
-            taskList = taskDataSource.getAllTasks();
+        TaskDataSource taskDataSource = new TaskDataSource(this);
+        taskDataSource.open();
+        taskList = taskDataSource.getAllTasks();
+        taskDataSource.close();
 
-            myAdapter = new ListViewAdapter(this,
-                    (ArrayList<Task>) taskList);
+        myAdapter = new ListViewAdapter(this,
+                (ArrayList<Task>) taskList);
 
-            ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
+        ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
 
-            listViewTasks.setAdapter(myAdapter);
-
-
-            listViewTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> a, View v, int position,
-                                        long arg3) {
+        listViewTasks.setAdapter(myAdapter);
 
 
-                }
-            });
+        listViewTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long arg3) {
+                Toast.makeText(getApplicationContext(), " " +position , Toast.LENGTH_LONG).show();
+                taskList.remove(position);
+                myAdapter.notifyDataSetChanged();
+                myAdapter.notifyDataSetInvalidated();
+            }
+        });
 
-            btn_main_addTask = (Button) findViewById(R.id.main_button_add);
-            btn_main_addTask.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        FloatingActionButton btn_main_addTask = (FloatingActionButton) findViewById(R.id.main_button_add);
+        btn_main_addTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    Intent i = new Intent(getApplicationContext(),
-                            NewTaskActivity.class);
-                    startActivity(i);
+                Intent i = new Intent(getApplicationContext(),
+                        NewTaskActivity.class);
+                startActivity(i);
 
-                }
-            });
-
-/*
-            get_map = (Button) findViewById(R.id.btn_main_getMap);
-            get_map.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checkPermissions()) {
-                        Intent intent = new Intent(MainActivity.this, Google_Map.class);
-                        startActivity(intent);
-                    }
-                }
-            });
-
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
-            // ATTENTION: This was auto-generated to implement the App Indexing API.
-            // See https://g.co/AppIndexing/AndroidStudio for more information.
-            client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        */
-        }
-        catch (Exception e)
-        {
-            e.getMessage();
-        }
+            }
+        });
     }
 
     @Override

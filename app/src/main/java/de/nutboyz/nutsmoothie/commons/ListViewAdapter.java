@@ -25,8 +25,7 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
     // View lookup cache
     private static class ViewHolder {
         TextView name;
-        TextView author;
-        TextView duration;
+        TextView distance;
         CheckBox cBox;
     }
 
@@ -40,35 +39,30 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
         super(context, R.layout.activity_main, data);
 
         this.context = context;
-        this.data=(ArrayList<Task>) data;
+        this.data = (ArrayList<Task>) data;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         this.convertView = convertView;
-        Task bookStatus = getItem(position);
-
+        //Task task = data.getItem(position);
 
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         // 2. Get rowView from inflater
-
         View rowView =  inflater.inflate(R.layout.list_row, parent, false);
 
             // 3. Get icon,title & counter views from the rowView
             CheckBox checkView = (CheckBox) rowView.findViewById(R.id.main_list_checkbox);
             TextView titleView = (TextView) rowView.findViewById(R.id.txtview_task_name);
-            TextView authorView = (TextView) rowView.findViewById(R.id.txtview_task_author);
-            TextView durationView = (TextView) rowView.findViewById(R.id.txtview_distance);
+            TextView distanceView = (TextView) rowView.findViewById(R.id.txtview_distance);
 
 
             // 4. Set the text for textView
-//	                imgView.setImageResource(data.get(position));
             titleView.setText(data.get(position).getName());
-           // authorView.setText(data.get(position).getAuthor());
-            durationView.setText("3");
+            distanceView.setText(data.get(position).getReminderRange());
 
 
         // 5. retrn rowView

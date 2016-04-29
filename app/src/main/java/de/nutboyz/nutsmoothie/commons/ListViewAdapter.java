@@ -4,20 +4,19 @@ package de.nutboyz.nutsmoothie.commons;
  * Created by Jojo on 21/04/16.
  */
 
-        import java.util.ArrayList;
-        import java.util.List;
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-        import android.app.Activity;
-        import android.content.Context;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.ArrayAdapter;
-        import android.widget.CheckBox;
-        import android.widget.ImageView;
-        import android.widget.TextView;
+import java.util.ArrayList;
 
-        import de.nutboyz.nutsmoothie.R;
+import de.nutboyz.nutsmoothie.R;
 
 
 public class ListViewAdapter extends ArrayAdapter<Task>{
@@ -54,18 +53,21 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
         // 2. Get rowView from inflater
         View rowView =  inflater.inflate(R.layout.list_row, parent, false);
 
-            // 3. Get icon,title & counter views from the rowView
-            CheckBox checkView = (CheckBox) rowView.findViewById(R.id.main_list_checkbox);
-            TextView titleView = (TextView) rowView.findViewById(R.id.txtview_task_name);
-            TextView distanceView = (TextView) rowView.findViewById(R.id.txtview_distance);
+        // 3. Get icon,title & counter views from the rowView
+        CheckBox checkView = (CheckBox) rowView.findViewById(R.id.main_list_checkbox);
+        TextView titleView = (TextView) rowView.findViewById(R.id.txtview_task_name);
+        TextView distanceView = (TextView) rowView.findViewById(R.id.txtview_distance);
 
 
-            // 4. Set the text for textView
-            titleView.setText(data.get(position).getName());
-            distanceView.setText(data.get(position).getReminderRange());
+        // 4. Set the text for textView
+        titleView.setText(data.get(position).getName());
+        Log.i("TEST", data.get(position).getName());
+        String distance = data.get(position).getReminderRange() + " km";
+        distanceView.setText(distance);
+        Log.i("TEST", String.valueOf(data.get(position).getReminderRange()));
 
 
-        // 5. retrn rowView
+        // 5. return rowView
         return rowView;
 
     }

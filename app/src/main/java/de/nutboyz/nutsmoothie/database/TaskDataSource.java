@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +98,22 @@ public class TaskDataSource {
 
         cursor.close();
         return tasks;
+    }
+
+    /**
+     * Returns a List of all Tasks in the database.
+     * @return List of Tasks.
+     */
+    public Task getTaskFromId(int id) {
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TASKS,
+                allColumns, "task_id=" + id, null, null, null, null);
+
+        cursor.moveToFirst();
+        Task task = cursorToTask(cursor);
+
+        cursor.close();
+        return task;
     }
 
     private Task cursorToTask(Cursor cursor) {

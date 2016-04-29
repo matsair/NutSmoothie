@@ -10,12 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +35,9 @@ public class NewTaskActivity extends Activity {
     public SeekBar seekbar;
     public ListView listView;
 
+    private ArrayAdapter<NutLocation> adapter;
+    private ArrayList<NutLocation> locationList = new ArrayList<>();
+
     public Task task;
     Bundle extras;
     /**
@@ -51,7 +54,12 @@ public class NewTaskActivity extends Activity {
             //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             // setSupportActionBar(toolbar);
 
+            buildAdapter();
+
             listView = (ListView) findViewById(R.id.newtask_liview_loc_list);
+            listView.setAdapter(adapter);
+
+            seekbar = (SeekBar)findViewById(R.id.newtask_seek);
 
             extras = getIntent().getExtras();
             if (extras != null) {
@@ -74,11 +82,29 @@ public class NewTaskActivity extends Activity {
                     if(task.getId() == this.task.getId()){
                         reminderName = (EditText)findViewById(R.id.newtask_edtext_task);
                         reminderName.setText(task.getName());
-                        seekbar = (SeekBar)findViewById(R.id.newtask_seek);
                         seekbar.setProgress(task.getReminderRange());
                     }
                 }
             }
+
+            final TextView seekBarValue = (TextView)findViewById(R.id.seekbar_range_text);
+
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                   @Override
+                                                   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                       seekBarValue.setText(String.valueOf(progress));
+                                                   }
+
+                                                   @Override
+                                                   public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                   }
+
+                                                   @Override
+                                                   public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                   }
+                                               });
 
 
             btn_save = (Button) findViewById(R.id.newtask_btn_save);
@@ -86,13 +112,8 @@ public class NewTaskActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
-                    seekbar = (SeekBar) findViewById(R.id.newtask_seek);
 
-                    if (extras == null) {
-                        task = saveTaskName(reminderName.toString(), seekbar.getProgress());
-                    } else {
-                        task = new Task(Integer.valueOf(extras.getString("task")));
-                    }
+                    task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
 
                     List<NutLocation> nutLocationList = getTaskLocations(task);
 
@@ -113,14 +134,12 @@ public class NewTaskActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
-                    seekbar = (SeekBar) findViewById(R.id.newtask_seek);
 
-                    task = saveTaskName(reminderName.toString(), seekbar.getProgress());
+                    task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
 
-                    Intent i = new Intent(getApplicationContext(),
-                            LocationListActivity.class);
-                    // TO-DO: class importieren damit benutzt werden kann
-                    i.putExtra("task", (Serializable) task);
+                    Intent i = new Intent(getApplicationContext(), LocationListActivity.class);
+
+                    i.putExtra("task", task.getId());
                     startActivity(i);
                 }
             });
@@ -226,6 +245,14 @@ public class NewTaskActivity extends Activity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    public void buildAdapter(){
+        adapter = new ArrayAdapter<>(
+                this,               // context for the activity
+                android.R.layout.simple_list_item_1,      // layout to use (create)
+                locationList        // items to be displayed
+        );
     }
 
 

@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
         TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
         taskList = taskDataSource.getAllTasks();
+        for (Task task : taskList) {
+            taskDataSource.deleteTask(task);
+        }
+        taskDataSource.addTask(new Task("Buy nuts", 100));
+        taskDataSource.addTask(new Task("Buy smoothie", 100));
         taskDataSource.close();
 
         myAdapter = new ListViewAdapter(this,

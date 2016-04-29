@@ -20,10 +20,14 @@ import java.util.List;
 import de.nutboyz.nutsmoothie.Map.Google_Map;
 import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.database.LocationDataSource;
+import de.nutboyz.nutsmoothie.database.TaskDataSource;
+import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
 
 public class LocationListActivity extends AppCompatActivity {
 
     private Button addNewLocation;
+
+    private int taskId;
 
     private ArrayList<NutLocation> locationList = new ArrayList<>();
     private ArrayAdapter<NutLocation> adapter;
@@ -35,6 +39,17 @@ public class LocationListActivity extends AppCompatActivity {
         setContentView(R.layout.location_list_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                //TODO
+            } else {
+                taskId = extras.getInt("task");
+            }
+        } else {
+            taskId = (int) savedInstanceState.getSerializable("task");
+        }
 
         addNewLocation = (Button) findViewById(R.id.add_new_location);
         addNewLocation.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +132,14 @@ public class LocationListActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO
+                TaskDataSource taskDataSource = new TaskDataSource(LocationListActivity.this);
+                taskDataSource.open();
+                TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(LocationListActivity.this);
+                taskLocationsDataSource.open();
+                taskLocationsDataSource.addLocationToTask(taskDataSource.getTaskFromId(taskId), locationList.get(position));
+                taskDataSource.close();
+                taskLocationsDataSource.close();
+                finish();
             }
         });
     }

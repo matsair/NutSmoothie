@@ -11,72 +11,60 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.nutboyz.nutsmoothie.R;
 
 
 public class ListViewAdapter extends ArrayAdapter<Task>{
 
-    // View lookup cache
-    private static class ViewHolder {
-        TextView name;
-        TextView distance;
-        CheckBox cBox;
+    private final String TAG = getClass().getSimpleName();
+
+    public ListViewAdapter(Context context, int textViewResourceId) {
+        super(context, textViewResourceId);
     }
 
-    Context context;
-    View convertView;
-    ArrayList<Task> data = new ArrayList<Task>();
-
-
-    public ListViewAdapter(Context context, ArrayList<Task> data) {
-
-        super(context, R.layout.activity_main, data);
-
-        this.context = context;
-        this.data = (ArrayList<Task>) data;
+    public ListViewAdapter(Context context, int resource, List<Task> items) {
+        super(context, resource, items);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        this.convertView = convertView;
-        //Task task = data.getItem(position);
 
+        View v = convertView;
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (v == null) {
+            LayoutInflater vi;
+            vi = LayoutInflater.from(getContext());
+            v = vi.inflate(R.layout.list_row, null);
+        }
 
-        // 2. Get rowView from inflater
-        View rowView =  inflater.inflate(R.layout.list_row, parent, false);
+        Task t = getItem(position);
 
-        // 3. Get icon,title & counter views from the rowView
-        CheckBox checkView = (CheckBox) rowView.findViewById(R.id.main_list_checkbox);
-        TextView titleView = (TextView) rowView.findViewById(R.id.txtview_task_name);
-        TextView distanceView = (TextView) rowView.findViewById(R.id.txtview_distance);
+        if (t != null) {
+            CheckBox checkView = (CheckBox) v.findViewById(R.id.main_list_checkbox);
+            TextView titleView = (TextView) v.findViewById(R.id.txtview_task_name);
+            TextView distanceView = (TextView) v.findViewById(R.id.txtview_distance);
 
+            if (checkView != null) {
+                //Todo
+            }
 
-        // 4. Set the text for textView
-        titleView.setText(data.get(position).getName());
-        Log.i("TEST", data.get(position).getName());
-        String distance = data.get(position).getReminderRange() + " km";
-        distanceView.setText(distance);
-        Log.i("TEST", String.valueOf(data.get(position).getReminderRange()));
+            if (titleView != null) {
+                titleView.setText(t.getName());
+                Log.i(TAG, t.getName());
+            }
 
+            if (distanceView != null) {
+                //Todo implement real distance
+                String distance = t.getReminderRange() + " km";
+                distanceView.setText(distance);
+                Log.i(TAG, String.valueOf(t.getReminderRange()));
+            }
+        }
 
-        // 5. return rowView
-        return rowView;
-
+        return v;
     }
-
-
-    static class RecordHolder {
-        TextView txtTitle;
-        ImageView imageItem;
-
-    }
-
 }

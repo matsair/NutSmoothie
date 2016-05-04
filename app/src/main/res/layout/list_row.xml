@@ -18,7 +18,8 @@
         <CheckBox
             android:id="@+id/main_list_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:focusable="false"/>
 
     </LinearLayout>
 
@@ -61,8 +62,8 @@
         android:layout_marginRight="50dp"
         android:textSize="13dip"
         android:text="distance: "
-        android:textColor="#10bcc9"
-        android:textStyle="bold" />
+        android:textColor="@color/colorPrimaryDark" />
+        <!--android:textStyle="bold"-->
 
     <TextView
         android:id="@+id/txtview_distance"
@@ -72,9 +73,9 @@
         android:layout_marginRight="30dp"
         android:layout_centerVertical="true"
         android:gravity="right"
-        android:textColor="#10bcc9"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="12dip"
-        android:textStyle="bold"
         android:text="10km" />
+        <!--android:textStyle="bold"-->
 
 </RelativeLayout>

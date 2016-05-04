@@ -14,10 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +27,10 @@ import de.nutboyz.nutsmoothie.database.TaskDataSource;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GoogleApiClient client;
-    List<Task> taskList = new ArrayList<Task>();
+    private final String TAG = getClass().getSimpleName();
+
+    private CheckBox checkBox;
+    List<Task> taskList = new ArrayList<>();
     ListViewAdapter myAdapter;
 
 
@@ -41,35 +41,44 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TaskDataSource taskDataSource = new TaskDataSource(this);
+        final TaskDataSource taskDataSource = new TaskDataSource(this);
         taskDataSource.open();
         taskList = taskDataSource.getAllTasks();
-        for (Task task : taskList) {
-            taskDataSource.deleteTask(task);
-        }
-        taskDataSource.addTask(new Task("Buy nuts", 100));
-        taskDataSource.addTask(new Task("Buy smoothie", 100));
         taskDataSource.close();
 
-        myAdapter = new ListViewAdapter(this,
-                (ArrayList<Task>) taskList);
-
         ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
-
+        myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);
         listViewTasks.setAdapter(myAdapter);
 
+        listViewTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+             @Override
+             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                 AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                 dialog.setMessage("Are you sure you want to delete this task?");
+                 dialog.setPositiveButton("Yes, delete", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         taskDataSource.open();
+                         taskDataSource.deleteTask(taskList.get(position));
+                         taskDataSource.close();
+                         taskList.remove(position);
+                         myAdapter.notifyDataSetChanged();
+                         myAdapter.notifyDataSetInvalidated();
+                     }
+                 });
+                 dialog.setNegativeButton("No, don't delete", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
 
-        listViewTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long arg3) {
-                Toast.makeText(getApplicationContext(), " " +position , Toast.LENGTH_LONG).show();
-                taskList.remove(position);
-                myAdapter.notifyDataSetChanged();
-                myAdapter.notifyDataSetInvalidated();
-            }
-        });
+                     }
+                 });
+                 dialog.create();
+                 dialog.show();
+                 return true;
+             }
+         });
 
-        FloatingActionButton btn_main_addTask = (FloatingActionButton) findViewById(R.id.main_button_add);
+                FloatingActionButton btn_main_addTask = (FloatingActionButton) findViewById(R.id.main_button_add);
         btn_main_addTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

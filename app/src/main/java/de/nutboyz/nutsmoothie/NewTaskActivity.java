@@ -1,9 +1,10 @@
 package de.nutboyz.nutsmoothie;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,7 +29,7 @@ import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
 /**
  * @author Johannes
  */
-public class NewTaskActivity extends Activity {
+public class NewTaskActivity extends AppCompatActivity {
 
     public Button btn_save, btn_cancel, btn_addLocation;
     public EditText reminderName;
@@ -51,8 +52,8 @@ public class NewTaskActivity extends Activity {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.newtask_activity);
-            //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            // setSupportActionBar(toolbar);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
             buildAdapter();
 

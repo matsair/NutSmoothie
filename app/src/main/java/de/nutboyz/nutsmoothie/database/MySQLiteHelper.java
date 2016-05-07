@@ -25,6 +25,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String TABLE_LOCATIONS_COLUMN_NAME = "name";
     public static final String TABLE_LOCATIONS_COLUMN_LATITUDE = "latitude";
     public static final String TABLE_LOCATIONS_COLUMN_LONGITUDE = "longitude";
+    public static final String TABLE_LOCATIONS_COLUMN_DISTANCE = "distance";
 
     // Table TaskLocations info
     public static final String TABLE_TASKLOCATIONS = "TaskLocations";
@@ -33,7 +34,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     public static final String DATABASE_NAME = "NutSmoothie.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database creation sql statement
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE " +
@@ -47,7 +48,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             " (" + TABLE_LOCATIONS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TABLE_LOCATIONS_COLUMN_NAME + " VARCHAR(45)," +
             TABLE_LOCATIONS_COLUMN_LATITUDE + " DOUBLE, " +
-            TABLE_LOCATIONS_COLUMN_LONGITUDE + " DOUBLE);";
+            TABLE_LOCATIONS_COLUMN_LONGITUDE + " DOUBLE, " +
+            TABLE_LOCATIONS_COLUMN_DISTANCE + " DOUBLE);";
 
     private static final String CREATE_TABLE_TASKLOCATIONS = "CREATE TABLE "
             + TABLE_TASKLOCATIONS +

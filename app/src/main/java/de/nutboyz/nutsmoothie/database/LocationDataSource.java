@@ -68,6 +68,21 @@ public class LocationDataSource {
     }
 
     /**
+     * Update the distance from the user's current location to the given location.
+     * @param location Location to be updated.
+     * @param distance The distance to the user's current location.
+     * @return The distance
+     */
+
+    public double updateDistance(NutLocation location, double distance) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE, distance);
+        String where = MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + location.getId();
+        database.update(MySQLiteHelper.TABLE_LOCATIONS, values, where, null);
+        return distance;
+    }
+
+    /**
      * Deletes the location from the database. Checks for id.
      * @param location Location to be deleted.
      */

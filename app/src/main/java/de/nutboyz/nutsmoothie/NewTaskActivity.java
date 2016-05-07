@@ -144,6 +144,8 @@ public class NewTaskActivity extends AppCompatActivity {
         btn_cancel = (Button) findViewById(R.id.newtask_btn_cancel);
         btn_cancel.setOnClickListener(new View.OnClickListener() {
 
+            //TODO Delete task
+
             @Override
             public void onClick(View v) {
                 logout();

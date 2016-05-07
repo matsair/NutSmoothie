@@ -85,7 +85,8 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <Button
                 android:id="@+id/newtask_btn_save"

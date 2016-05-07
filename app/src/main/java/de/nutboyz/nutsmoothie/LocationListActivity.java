@@ -147,7 +147,6 @@ public class LocationListActivity extends AppCompatActivity {
                 Log.i(TAG, "Task ID: " + taskId);
                 i.putExtra("task", String.valueOf(taskId));
                 startActivity(i);
-                finish();
             }
         });
     }
@@ -172,5 +171,8 @@ public class LocationListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume called");
+        adapter.clear();
+        populateListView();
     }
 }

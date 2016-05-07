@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,6 +46,8 @@ public class NewTaskActivity extends AppCompatActivity {
         setContentView(R.layout.newtask_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         TextView reminderLocations = (TextView) findViewById(R.id.newtask_liview_loc_list_title);
         reminderLocations.setVisibility(View.INVISIBLE);
@@ -105,15 +108,17 @@ public class NewTaskActivity extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
 
-                task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+                if (extras == null) {
+                    reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
 
-                List<NutLocation> nutLocationList = getTaskLocations(task);
+                    task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
 
-                saveLocationToTask(task, nutLocationList);
+                    List<NutLocation> nutLocationList = getTaskLocations(task);
 
-
+                    saveLocationToTask(task, nutLocationList);
+                }
+                
                 // TO-DO:
                 // getList und dann gegettetes Element auswählen
                 // also Nutlocation für Task
@@ -129,10 +134,15 @@ public class NewTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (extras == null) {
+                    Log.i(TAG, "extras is null");
                     reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
 
                     task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
                 }
+                else {
+                    Log.i(TAG, "extras is not null");
+                }
+
 
                 Intent i = new Intent(getApplicationContext(), LocationListActivity.class);
 
@@ -144,10 +154,16 @@ public class NewTaskActivity extends AppCompatActivity {
         btn_cancel = (Button) findViewById(R.id.newtask_btn_cancel);
         btn_cancel.setOnClickListener(new View.OnClickListener() {
 
-            //TODO Delete task
-
             @Override
             public void onClick(View v) {
+
+                if (extras != null) {
+                    TaskDataSource taskDataSource = new TaskDataSource(NewTaskActivity.this);
+                    taskDataSource.open();
+                    taskDataSource.deleteTask(task);
+                    taskDataSource.close();
+                }
+
                 logout();
             }
         });

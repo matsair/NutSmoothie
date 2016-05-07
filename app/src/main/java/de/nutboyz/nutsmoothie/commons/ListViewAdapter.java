@@ -5,7 +5,6 @@ package de.nutboyz.nutsmoothie.commons;
  */
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,14 +53,14 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
 
             if (titleView != null) {
                 titleView.setText(t.getName());
-                Log.i(TAG, t.getName());
+//                Log.i(TAG, t.getName());
             }
 
             if (distanceView != null) {
                 //Todo implement real distance
                 String distance = t.getReminderRange() + " km";
                 distanceView.setText(distance);
-                Log.i(TAG, String.valueOf(t.getReminderRange()));
+//                Log.i(TAG, String.valueOf(t.getReminderRange()));
             }
         }
 

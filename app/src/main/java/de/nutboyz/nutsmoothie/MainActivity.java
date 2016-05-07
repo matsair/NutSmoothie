@@ -106,7 +106,17 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.refresh) {
+            myAdapter.clear();
+            final TaskDataSource taskDataSource = new TaskDataSource(this);
+            taskDataSource.open();
+            taskList = taskDataSource.getAllTasks();
+            taskDataSource.close();
+
+            ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
+            myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);
+            listViewTasks.setAdapter(myAdapter);
+
             return true;
         }
 

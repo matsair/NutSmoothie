@@ -3,7 +3,7 @@
     <string name="location_list_title">Locations</string>
     <string name="new_task_activity_title">Add new task</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
 
     <!-- Main Screen -->
     <string name="btn_main_get_map">Get Map</string>

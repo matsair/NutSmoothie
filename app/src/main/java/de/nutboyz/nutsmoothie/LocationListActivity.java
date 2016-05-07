@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,8 @@ import de.nutboyz.nutsmoothie.database.TaskDataSource;
 import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
 
 public class LocationListActivity extends AppCompatActivity {
+
+    private final String TAG = getClass().getSimpleName();
 
     private Button addNewLocation;
 
@@ -139,6 +142,11 @@ public class LocationListActivity extends AppCompatActivity {
                 taskLocationsDataSource.addLocationToTask(taskDataSource.getTaskFromId(taskId), locationList.get(position));
                 taskDataSource.close();
                 taskLocationsDataSource.close();
+                Intent i = new Intent(getApplicationContext(),
+                        NewTaskActivity.class);
+                Log.i(TAG, "Task ID: " + taskId);
+                i.putExtra("task", String.valueOf(taskId));
+                startActivity(i);
                 finish();
             }
         });

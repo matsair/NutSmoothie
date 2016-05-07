@@ -1,5 +1,21 @@
 package de.nutboyz.nutsmoothie.Map;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -8,28 +24,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.ArrayList;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import de.nutboyz.nutsmoothie.GPS.gpsService;
 import de.nutboyz.nutsmoothie.R;
@@ -54,10 +67,19 @@ public class Google_Map extends AppCompatActivity
     static public final String mNewLocation = "de.nutboyz.nutsmoothie.newLocation";
 
 
-    /***
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+
+   /*Service Bind to MainActivity
+
+    *  *//***
      * The Service connection for retrieving the GPS Location
      * @Author: Jan
-     */
+     *//*
     private ServiceConnection GpsService = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -68,7 +90,7 @@ public class Google_Map extends AppCompatActivity
         public void onServiceDisconnected(ComponentName name) {
 
         }
-    };
+    };*/
 
 
     /***
@@ -156,6 +178,9 @@ public class Google_Map extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         btn_save_location = (Button) findViewById(R.id.btn_map_getlocation);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -164,9 +189,10 @@ public class Google_Map extends AppCompatActivity
             this.google_map = map;
 
 
+            /* Service bind to Main Actitvity
             bindService(new Intent(getApplicationContext(),gpsService.class)
                     ,GpsService,
-                    Context.BIND_AUTO_CREATE);
+                    Context.BIND_AUTO_CREATE);*/
 
             loadLocations();
             //Set Listener
@@ -273,13 +299,12 @@ public class Google_Map extends AppCompatActivity
                     google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
                 }else
                 {
-                    /*
                     AlertDialog.Builder noLocationDialog = new AlertDialog.Builder(this);
                     noLocationDialog.setTitle("No Location")
-                            .setMessage("Unfortunately, there is no GPS fix available.")
+                            .setMessage("Unfortunately, there is no GPS fix available. Please wait a moment.")
                             .setNeutralButton("OK",null)
                             .create()
-                            .show();*/
+                            .show();
                 }
 
         }catch (Exception e)
@@ -292,11 +317,41 @@ public class Google_Map extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Google_Map Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://de.nutboyz.nutsmoothie/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Google_Map Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://de.nutboyz.nutsmoothie/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     /***
@@ -322,7 +377,7 @@ public class Google_Map extends AppCompatActivity
             database.open();
             database.addLocation(selectedLocations.get(location_size));
             database.close();
-            finish();
+
         }catch (Exception e)
         {
             e.getMessage();

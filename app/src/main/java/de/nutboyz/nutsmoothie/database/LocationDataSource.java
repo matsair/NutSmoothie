@@ -77,7 +77,7 @@ public class LocationDataSource {
     public double updateDistance(NutLocation location, double distance) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE, distance);
-        String where = MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + location.getId();
+        String where = MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + "=" + location.getId();
         database.update(MySQLiteHelper.TABLE_LOCATIONS, values, where, null);
         return distance;
     }

@@ -1,11 +1,15 @@
 package de.nutboyz.nutsmoothie;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +24,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.nutboyz.nutsmoothie.GPS.gpsService;
 import de.nutboyz.nutsmoothie.Map.Google_Map;
 import de.nutboyz.nutsmoothie.commons.ListViewAdapter;
 import de.nutboyz.nutsmoothie.commons.Task;
@@ -33,6 +38,21 @@ public class MainActivity extends AppCompatActivity {
     List<Task> taskList = new ArrayList<>();
     ListViewAdapter myAdapter;
 
+    /***
+     * The Service connection for retrieving the GPS Location
+     * @Author: Jan
+     */
+    private ServiceConnection GpsService = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +109,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        if (checkPermissions()) {
+            bindService(new Intent(getApplicationContext(), gpsService.class)
+                    , GpsService,
+                    Context.BIND_AUTO_CREATE);
+        }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,10 +183,10 @@ public class MainActivity extends AppCompatActivity {
             switch (requestCode) {
                 case 10:
                     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        //call the onClick method of the button if permissions are granted
-                        //get_map.performClick();
-                        Intent intent = new Intent(MainActivity.this, Google_Map.class);
-                        startActivity(intent);
+
+                        bindService(new Intent(getApplicationContext(), gpsService.class)
+                                , GpsService,
+                                Context.BIND_AUTO_CREATE);
                         return;
                     } else {
                         //create AlertDialog

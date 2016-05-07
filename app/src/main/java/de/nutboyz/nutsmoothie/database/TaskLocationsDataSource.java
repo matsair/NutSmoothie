@@ -96,4 +96,27 @@ public class TaskLocationsDataSource {
         cursor.close();
         return locationIds;
     }
+
+    /**
+     * Returns a list of location ids corresponding to the given task.
+     * @param location Location for which task ids are requested.
+     * @return Integer List of location ids.
+     */
+    public List<Integer> getLocationTaskIds(NutLocation location) {
+        List<Integer> locationIds = new ArrayList<>();
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TASKLOCATIONS,
+                allColumns,
+                MySQLiteHelper.TABLE_TASKLOCATIONS_COLUMN_TASK_ID + " = " + location.getId(),
+                null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            locationIds.add(cursor.getInt(0));
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return locationIds;
+    }
 }

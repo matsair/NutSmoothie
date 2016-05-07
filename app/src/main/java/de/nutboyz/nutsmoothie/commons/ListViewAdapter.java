@@ -58,7 +58,7 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
 
             if (distanceView != null) {
                 //Todo implement real distance
-                String distance = t.getReminderRange() + " km";
+                String distance = t.getDistance() + " km";
                 distanceView.setText(distance);
 //                Log.i(TAG, String.valueOf(t.getReminderRange()));
             }

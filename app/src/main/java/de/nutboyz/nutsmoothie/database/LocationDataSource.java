@@ -57,6 +57,7 @@ public class LocationDataSource {
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_NAME, location.getName());
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LATITUDE, location.getLatitude());
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LONGITUDE, location.getLongitude());
+        values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE, 0);
         long insertId = database.insert(MySQLiteHelper.TABLE_LOCATIONS, null, values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATIONS,
                 allColumns, MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + " = " + insertId, null,
@@ -161,6 +162,7 @@ public class LocationDataSource {
         location.setName(cursor.getString(1));
         location.setLatitude(cursor.getDouble(2));
         location.setLongitude(cursor.getDouble(3));
+//        location.setDistance(cursor.getDouble(4));
         return location;
     }
 }

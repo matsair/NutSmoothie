@@ -12,6 +12,7 @@ public class NutLocation {
     private String name;
     private double latitude;
     private double longitude;
+    private double distance;
 
     public NutLocation(String name) {
         this.name = name;
@@ -57,6 +58,14 @@ public class NutLocation {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     @Override

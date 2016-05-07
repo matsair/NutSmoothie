@@ -1,18 +1,10 @@
 package de.nutboyz.nutsmoothie.GPS;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,6 +33,8 @@ import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
  * Created by Jan on 05.04.16.
  */
 public class gpsService extends Service {
+
+    private final String TAG = getClass().getSimpleName();
 
     private LocationListener locationListener;
     private LocationManager locationManager;
@@ -168,6 +163,7 @@ public class gpsService extends Service {
 
                 for (int l = 0; l < LocationList.size(); l++) {
                     double distance = location.distanceTo(LocationList.get(l).getLocation());
+                    Log.i(TAG, "Distance: " + distance);
                     // Save distance to Location
                     LocationDataSource saveDistance = new LocationDataSource(getApplicationContext());
                     saveDistance.open();

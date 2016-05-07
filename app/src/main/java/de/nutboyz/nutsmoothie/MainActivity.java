@@ -28,8 +28,11 @@ import java.util.List;
 
 import de.nutboyz.nutsmoothie.GPS.gpsService;
 import de.nutboyz.nutsmoothie.commons.ListViewAdapter;
+import de.nutboyz.nutsmoothie.commons.NutLocation;
 import de.nutboyz.nutsmoothie.commons.Task;
+import de.nutboyz.nutsmoothie.database.LocationDataSource;
 import de.nutboyz.nutsmoothie.database.TaskDataSource;
+import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,10 +70,32 @@ public class MainActivity extends AppCompatActivity {
         taskList = taskDataSource.getAllTasks();
         taskDataSource.close();
 
+        for (Task task: taskList) {
+            LocationDataSource locationDataSource = new LocationDataSource(this);
+            locationDataSource.open();
+            TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(this);
+            taskLocationsDataSource.open();
+
+            List<Integer> locations = taskLocationsDataSource.getTaskLocationIds(task);
+            ArrayList<Double> distances = new ArrayList<>();
+            for (NutLocation location : locationDataSource.getLocationsFromIntList(locations)) {
+                distances.add(location.getDistance());
+            }
+            if (distances.size() > 0) {
+                int minIndex = distances.indexOf(Collections.min(distances));
+                task.setDistance(distances.get(minIndex));
+            }
+            else {
+                task.setDistance(0);
+            }
+            locationDataSource.close();
+            taskLocationsDataSource.close();
+        }
+
         Collections.sort(taskList, new Comparator<Task>() {
             @Override
             public int compare(Task lhs, Task rhs) {
-                return lhs.getReminderRange() > rhs.getReminderRange() ? 1 : (lhs.getReminderRange() < rhs.getReminderRange() ? -1 : 0);
+                return lhs.getDistance() > rhs.getDistance() ? 1 : (lhs.getDistance() < rhs.getDistance() ? -1 : 0);
             }
         });
 

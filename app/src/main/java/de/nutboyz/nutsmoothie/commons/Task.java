@@ -9,6 +9,7 @@ public class Task {
     private int id;
     private String name;
     private int reminderRange;
+    private double distance;
 
     public Task() {
 
@@ -51,6 +52,14 @@ public class Task {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     @Override

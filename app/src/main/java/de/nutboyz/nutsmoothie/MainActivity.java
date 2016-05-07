@@ -22,10 +22,11 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.nutboyz.nutsmoothie.GPS.gpsService;
-import de.nutboyz.nutsmoothie.Map.Google_Map;
 import de.nutboyz.nutsmoothie.commons.ListViewAdapter;
 import de.nutboyz.nutsmoothie.commons.Task;
 import de.nutboyz.nutsmoothie.database.TaskDataSource;
@@ -65,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
         taskDataSource.open();
         taskList = taskDataSource.getAllTasks();
         taskDataSource.close();
+
+        Collections.sort(taskList, new Comparator<Task>() {
+            @Override
+            public int compare(Task lhs, Task rhs) {
+                return lhs.getReminderRange() > rhs.getReminderRange() ? 1 : (lhs.getReminderRange() < rhs.getReminderRange() ? -1 : 0);
+            }
+        });
 
         ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
         myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);
@@ -141,6 +149,13 @@ public class MainActivity extends AppCompatActivity {
             taskDataSource.open();
             taskList = taskDataSource.getAllTasks();
             taskDataSource.close();
+
+            Collections.sort(taskList, new Comparator<Task>() {
+                @Override
+                public int compare(Task lhs, Task rhs) {
+                    return lhs.getReminderRange() > rhs.getReminderRange() ? 1 : (lhs.getReminderRange() < rhs.getReminderRange() ? -1 : 0);
+                }
+            });
 
             ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
             myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);

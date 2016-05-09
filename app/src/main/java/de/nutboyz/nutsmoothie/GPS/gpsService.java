@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.nutboyz.nutsmoothie.MainActivity;
 import de.nutboyz.nutsmoothie.Map.Google_Map;
 import de.nutboyz.nutsmoothie.R;
 import de.nutboyz.nutsmoothie.commons.NutLocation;
@@ -48,7 +49,7 @@ public class gpsService extends Service {
     private final IBinder mGpsBinder = new GeoServiceBinder();
     private boolean debug = true;
     private Intent mBroadcastReceiver;
-    private int NotifCounter = 0;
+
     @Override
     /***
      * Starts the location listener and selects the best provider
@@ -169,11 +170,15 @@ public class gpsService extends Service {
                     saveDistance.open();
                     saveDistance.updateDistance(LocationList.get(l), distance);
                     saveDistance.close();
+                    if(debug)
+                    {
+                        Toast.makeText(getApplicationContext(),"Distance: " + String.valueOf(distance) + "\n Task: " + nutTasks.get(k).getName(),Toast.LENGTH_SHORT);
+                    }
                     //-------------------
                     if (distance <= locationRange) {
                         int color = getResources().getColor(R.color.notif_color);
                         int icon = R.drawable.ic_notif_location_reached;
-                        String title = "You reached a stored Location: " + LocationList.get(l).getName();
+                        String title = "Arrived at: " + LocationList.get(l).getName();
                         String text = "Your task is: " + nutTasks.get(k).getName();
                         //Build the notification
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -184,7 +189,7 @@ public class gpsService extends Service {
                                 .setDefaults(Notification.DEFAULT_ALL)
                                 .setPriority(Notification.PRIORITY_HIGH)
                                 .setVibrate(new long[]{1000, 1000});
-                        Intent resultIntent = new Intent(this, Google_Map.class);
+                        Intent resultIntent = new Intent(this, MainActivity.class);
                         resultIntent.putExtra("GPS", new double[]{LocationList.get(l).getLongitude(),
                                 LocationList.get(l).getLatitude()});
 
@@ -199,11 +204,18 @@ public class gpsService extends Service {
 
                         builder.setContentIntent(resultPendingIntent);
                         NotificationManager mNotifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-
+                        int id = 0;
+                        if(nutTasks.get(k).getId() == 0)
+                        {
+                            id = nutTasks.get(k).getId() + LocationList.get(l).getId();
+                        }
+                        else
+                        {
+                            id = Integer.parseInt(String.valueOf(nutTasks.get(k).getId()) + String.valueOf(LocationList.get(l).getId()));
+                        }
                         //sent out Task Notification
-                        mNotifMgr.notify(NotifCounter, builder.build());
-                        NotifCounter++;
+                        mNotifMgr.notify(id, builder.build());
+
                     }
                 }
             }

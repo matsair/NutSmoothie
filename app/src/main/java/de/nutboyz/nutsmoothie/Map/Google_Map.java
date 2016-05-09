@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -100,6 +101,8 @@ public class Google_Map extends AppCompatActivity
                 }
                 else if(intent.getAction().equals(mNewLocation))
                 {
+
+                    /*
                     double[] coordinates = intent.getDoubleArrayExtra("GPS");
                     LatLng new_position = new LatLng(coordinates[1],coordinates[0]);
                     CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -108,7 +111,7 @@ public class Google_Map extends AppCompatActivity
                             .bearing(180)
                             .tilt(0)
                             .build();
-                    google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
+                    google_map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);*/
                 }
 
             } catch (Exception e) {
@@ -233,7 +236,7 @@ public class Google_Map extends AppCompatActivity
      */
     @Override
     public void onMapLongClick(LatLng point) {
-
+        Log.d("GPS_Coord", "Long: " + String.valueOf(point.longitude) + " Lat: " + String.valueOf(point.latitude));
         last_marker = google_map.addMarker(new MarkerOptions()
                 .position(point)
                 .title("Selected Location"));

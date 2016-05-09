@@ -25,7 +25,8 @@ public class LocationDataSource {
     private String[] allColumns = { MySQLiteHelper.TABLE_TASKLOCATIONS_COLUMN_LOCATION_ID,
             MySQLiteHelper.TABLE_LOCATIONS_COLUMN_NAME,
             MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LATITUDE,
-            MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LONGITUDE};
+            MySQLiteHelper.TABLE_LOCATIONS_COLUMN_LONGITUDE,
+            MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE};
 
     public LocationDataSource(Context context) {
         dbHelper = new MySQLiteHelper(context);
@@ -162,7 +163,7 @@ public class LocationDataSource {
         location.setName(cursor.getString(1));
         location.setLatitude(cursor.getDouble(2));
         location.setLongitude(cursor.getDouble(3));
-//        location.setDistance(cursor.getDouble(4));
+        location.setDistance(cursor.getDouble(4));
         return location;
     }
 }

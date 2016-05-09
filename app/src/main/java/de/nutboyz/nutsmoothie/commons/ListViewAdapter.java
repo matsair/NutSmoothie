@@ -57,9 +57,23 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
             }
 
             if (distanceView != null) {
-                //Todo implement real distance
-                String distance = t.getDistance() + " km";
-                distanceView.setText(distance);
+                double distance;
+                String distanceStr;
+                if (t.getDistance() > 1500) {
+                    distance = t.getDistance()/1000.0;
+                    distanceStr = String.format("%.2f", distance) + " km";
+                }
+                else {
+                    distance = t.getDistance();
+                    distanceStr = (int) distance + " m";
+                }
+                if (t.getDistance() == 0) {
+                    distanceView.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    distanceView.setVisibility(View.VISIBLE);
+                    distanceView.setText(distanceStr);
+                }
 //                Log.i(TAG, String.valueOf(t.getReminderRange()));
             }
         }

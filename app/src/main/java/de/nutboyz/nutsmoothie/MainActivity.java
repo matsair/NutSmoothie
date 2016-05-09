@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -38,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
 
-    private CheckBox checkBox;
-    List<Task> taskList = new ArrayList<>();
+    List<Task> taskList;
     ListViewAdapter myAdapter;
+    ListView listViewTasks;
 
     /***
      * The Service connection for retrieving the GPS Location
@@ -70,68 +69,42 @@ public class MainActivity extends AppCompatActivity {
         taskList = taskDataSource.getAllTasks();
         taskDataSource.close();
 
-        for (Task task: taskList) {
-            LocationDataSource locationDataSource = new LocationDataSource(this);
-            locationDataSource.open();
-            TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(this);
-            taskLocationsDataSource.open();
+        listViewTasks = (ListView) findViewById(R.id.home_task_list);
 
-            List<Integer> locations = taskLocationsDataSource.getTaskLocationIds(task);
-            ArrayList<Double> distances = new ArrayList<>();
-            for (NutLocation location : locationDataSource.getLocationsFromIntList(locations)) {
-                distances.add(location.getDistance());
-            }
-            if (distances.size() > 0) {
-                int minIndex = distances.indexOf(Collections.min(distances));
-                task.setDistance(distances.get(minIndex));
-            }
-            else {
-                task.setDistance(0);
-            }
-            locationDataSource.close();
-            taskLocationsDataSource.close();
-        }
-
-        Collections.sort(taskList, new Comparator<Task>() {
+        listViewTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public int compare(Task lhs, Task rhs) {
-                return lhs.getDistance() > rhs.getDistance() ? 1 : (lhs.getDistance() < rhs.getDistance() ? -1 : 0);
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                dialog.setMessage("Are you sure you want to delete this task?");
+                dialog.setPositiveButton("Yes, delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        taskDataSource.open();
+                        taskDataSource.deleteTask(taskList.get(position));
+                        taskDataSource.close();
+                        taskList.remove(position);
+                        myAdapter.notifyDataSetChanged();
+                        myAdapter.notifyDataSetInvalidated();
+                    }
+                });
+                dialog.setNegativeButton("No, don't delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialog.create();
+                dialog.show();
+                return true;
             }
         });
 
-        ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
+        updateTaskList();
+
         myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);
         listViewTasks.setAdapter(myAdapter);
 
-        listViewTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-             @Override
-             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                 AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                 dialog.setMessage("Are you sure you want to delete this task?");
-                 dialog.setPositiveButton("Yes, delete", new DialogInterface.OnClickListener() {
-                     @Override
-                     public void onClick(DialogInterface dialog, int which) {
-                         taskDataSource.open();
-                         taskDataSource.deleteTask(taskList.get(position));
-                         taskDataSource.close();
-                         taskList.remove(position);
-                         myAdapter.notifyDataSetChanged();
-                         myAdapter.notifyDataSetInvalidated();
-                     }
-                 });
-                 dialog.setNegativeButton("No, don't delete", new DialogInterface.OnClickListener() {
-                     @Override
-                     public void onClick(DialogInterface dialog, int which) {
-
-                     }
-                 });
-                 dialog.create();
-                 dialog.show();
-                 return true;
-             }
-         });
-
-                FloatingActionButton btn_main_addTask = (FloatingActionButton) findViewById(R.id.main_button_add);
+        FloatingActionButton btn_main_addTask = (FloatingActionButton) findViewById(R.id.main_button_add);
         btn_main_addTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,22 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
-            myAdapter.clear();
-            final TaskDataSource taskDataSource = new TaskDataSource(this);
-            taskDataSource.open();
-            taskList = taskDataSource.getAllTasks();
-            taskDataSource.close();
-
-            Collections.sort(taskList, new Comparator<Task>() {
-                @Override
-                public int compare(Task lhs, Task rhs) {
-                    return lhs.getReminderRange() > rhs.getReminderRange() ? 1 : (lhs.getReminderRange() < rhs.getReminderRange() ? -1 : 0);
-                }
-            });
-
-            ListView listViewTasks = (ListView) findViewById(R.id.home_task_list);
-            myAdapter = new ListViewAdapter(this, R.layout.list_row, taskList);
-            listViewTasks.setAdapter(myAdapter);
+            updateTaskList();
+            myAdapter.notifyDataSetChanged();
 
             return true;
         }
@@ -263,5 +222,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    private void updateTaskList() {
+        for (Task task: taskList) {
+            LocationDataSource locationDataSource = new LocationDataSource(this);
+            locationDataSource.open();
+            TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(this);
+            taskLocationsDataSource.open();
+
+            List<Integer> locations = taskLocationsDataSource.getTaskLocationIds(task);
+            ArrayList<Double> distances = new ArrayList<>();
+            for (NutLocation location : locationDataSource.getLocationsFromIntList(locations)) {
+                distances.add(location.getDistance());
+            }
+            if (distances.size() > 0) {
+                int minIndex = distances.indexOf(Collections.min(distances));
+                task.setDistance(distances.get(minIndex));
+            }
+            else {
+                task.setDistance(0);
+            }
+            locationDataSource.close();
+            taskLocationsDataSource.close();
+        }
+
+        Collections.sort(taskList, new Comparator<Task>() {
+            @Override
+            public int compare(Task lhs, Task rhs) {
+                return lhs.getDistance() > rhs.getDistance() ? 1 : (lhs.getDistance() < rhs.getDistance() ? -1 : 0);
+            }
+        });
     }
 }

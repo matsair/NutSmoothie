@@ -139,6 +139,8 @@ public class NewTaskActivity extends AppCompatActivity {
                 else {
                     if (extras != null) {
                         Task newTask = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+                        List<NutLocation> nutLocationList = getTaskLocations(task);
+                        saveLocationToTask(newTask, nutLocationList);
                         if (task.getId() != newTask.getId()) {
                             TaskDataSource taskDataSource = new TaskDataSource(NewTaskActivity.this);
                             taskDataSource.open();
@@ -148,6 +150,8 @@ public class NewTaskActivity extends AppCompatActivity {
                     }
                     else {
                         Task newTask = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+                        List<NutLocation> nutLocationList = getTaskLocations(task);
+                        saveLocationToTask(newTask, nutLocationList);
                     }
 
                     logout();
@@ -238,6 +242,16 @@ public class NewTaskActivity extends AppCompatActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all act
         startActivity(i);
         finish();
+    }
+
+    public void saveLocationToTask(Task task, List<NutLocation> nutLocationList){
+        TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(this);
+        taskLocationsDataSource.open();
+
+        for (NutLocation location : nutLocationList) {
+            taskLocationsDataSource.addLocationToTask(task, location);
+        }
+        taskLocationsDataSource.close();
     }
 
     @Override

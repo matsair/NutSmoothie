@@ -1,7 +1,10 @@
 package de.nutboyz.nutsmoothie;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -43,18 +46,21 @@ public class NewTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate called");
         setContentView(R.layout.newtask_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        TextView reminderLocations = (TextView) findViewById(R.id.newtask_liview_loc_list_title);
+        final TextView reminderLocations = (TextView) findViewById(R.id.newtask_liview_loc_list_title);
         reminderLocations.setVisibility(View.INVISIBLE);
 
         listView = (ListView) findViewById(R.id.newtask_liview_loc_list);
 
         seekbar = (SeekBar) findViewById(R.id.newtask_seek);
+        reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
+        final TextView reminderRange = (TextView) findViewById(R.id.newtask_text_range);
 
         extras = getIntent().getExtras();
         if (extras != null) {
@@ -66,30 +72,37 @@ public class NewTaskActivity extends AppCompatActivity {
                 locationList.add(nutLocation);
             }
 
+            reminderName.setText(extras.getString("taskName"), TextView.BufferType.EDITABLE);
+            Log.i(TAG, "EditText: " + extras.getString("taskName"));
+            seekbar.setProgress(extras.getInt("taskReminderRange"));
+            reminderRange.setText("Reminder range: " + extras.getInt("taskReminderRange") + "m");
+
             reminderLocations.setVisibility(View.VISIBLE);
 
             listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, locationList));
 
-            TaskDataSource taskDataSource = new TaskDataSource(this);
-            taskDataSource.open();
-            List<Task> taskList = taskDataSource.getAllTasks();
-            taskDataSource.close();
-
-            for(Task task : taskList){
-                if(task.getId() == this.task.getId()){
-                    reminderName = (EditText)findViewById(R.id.newtask_edtext_task);
-                    reminderName.setText(task.getName());
-                    seekbar.setProgress(task.getReminderRange());
-                }
-            }
+//            TaskDataSource taskDataSource = new TaskDataSource(this);
+//            taskDataSource.open();
+//            List<Task> taskList = taskDataSource.getAllTasks();
+//            taskDataSource.close();
+//
+//            for(Task task : taskList){
+//                if(task.getId() == this.task.getId()){
+//                    reminderName = (EditText)findViewById(R.id.newtask_edtext_task);
+//                    reminderName.setText(task.getName());
+//                    seekbar.setProgress(task.getReminderRange());
+//                }
+//            }
         }
-
-        final TextView seekBarValue = (TextView)findViewById(R.id.seekbar_range_text);
+        else {
+            reminderRange.setText("Reminder range:");
+        }
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                @Override
                                                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                   seekBarValue.setText(String.valueOf(progress));
+                                                   String reminderRangeText = "Reminder range: " + progress + "m";
+                                                   reminderRange.setText(reminderRangeText);
                                                }
 
                                                @Override
@@ -105,30 +118,61 @@ public class NewTaskActivity extends AppCompatActivity {
 
 
         btn_save = (Button) findViewById(R.id.newtask_btn_save);
+        btn_save.getBackground().setColorFilter(0xFFFF4081, PorterDuff.Mode.MULTIPLY);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (extras == null) {
-                    reminderName = (EditText) findViewById(R.id.newtask_edtext_task);
+                if (reminderName.getText().length() == 0) {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(NewTaskActivity.this);
+                    dialog.setMessage("You didn't give your task a name! Continue?");
+                    dialog.setPositiveButton("Yes, it doesn't need a name", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (extras == null) {
+                                task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
 
-                    task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+                                List<NutLocation> nutLocationList = getTaskLocations(task);
 
-                    List<NutLocation> nutLocationList = getTaskLocations(task);
+                                saveLocationToTask(task, nutLocationList);
+                            }
+                            else {
+                                //Todo
+                            }
 
-                    saveLocationToTask(task, nutLocationList);
+                            logout();
+                        }
+                    });
+                    dialog.setNegativeButton("No, add a name", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dialog.create();
+                    dialog.show();
                 }
-                
-                // TO-DO:
-                // getList und dann gegettetes Element auswählen
-                // also Nutlocation für Task
 
-                logout();
+                else {
+                    if (extras == null) {
+                        task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+
+                        List<NutLocation> nutLocationList = getTaskLocations(task);
+
+                        saveLocationToTask(task, nutLocationList);
+                    }
+                    else {
+                        //Todo
+                    }
+
+                    logout();
+                }
             }
         });
 
 
         btn_addLocation = (Button) findViewById(R.id.newtask_btn_addLoc);
+        btn_addLocation.getBackground().setColorFilter(0xFFFF4081, PorterDuff.Mode.MULTIPLY);
         btn_addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,11 +191,14 @@ public class NewTaskActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), LocationListActivity.class);
 
                 i.putExtra("task", task.getId());
+                i.putExtra("taskName", reminderName.getText().toString());
+                i.putExtra("taskReminderRange", seekbar.getProgress());
                 startActivity(i);
             }
         });
 
         btn_cancel = (Button) findViewById(R.id.newtask_btn_cancel);
+        btn_cancel.getBackground().setColorFilter(0xFFFF4081, PorterDuff.Mode.MULTIPLY);
         btn_cancel.setOnClickListener(new View.OnClickListener() {
 
             @Override

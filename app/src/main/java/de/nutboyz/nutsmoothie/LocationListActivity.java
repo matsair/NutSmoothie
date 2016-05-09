@@ -2,6 +2,7 @@ package de.nutboyz.nutsmoothie;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,8 @@ public class LocationListActivity extends AppCompatActivity {
     private Button addNewLocation;
 
     private int taskId;
+    private String taskName;
+    private int taskReminderRange;
 
     private ArrayList<NutLocation> locationList = new ArrayList<>();
     private ArrayAdapter<NutLocation> adapter;
@@ -49,12 +52,17 @@ public class LocationListActivity extends AppCompatActivity {
                 //TODO
             } else {
                 taskId = extras.getInt("task");
+                taskName = extras.getString("taskName");
+                taskReminderRange = extras.getInt("taskReminderRange");
             }
         } else {
             taskId = (int) savedInstanceState.getSerializable("task");
+            taskName = (String) savedInstanceState.getSerializable("taskName");
+            taskReminderRange = (int) savedInstanceState.getSerializable("taskReminderRange");
         }
 
         addNewLocation = (Button) findViewById(R.id.add_new_location);
+        addNewLocation.getBackground().setColorFilter(0xFFFF4081, PorterDuff.Mode.MULTIPLY);
         addNewLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +154,8 @@ public class LocationListActivity extends AppCompatActivity {
                         NewTaskActivity.class);
                 Log.i(TAG, "Task ID: " + taskId);
                 i.putExtra("task", String.valueOf(taskId));
+                i.putExtra("taskName", taskName);
+                i.putExtra("taskReminderRange", taskReminderRange);
                 startActivity(i);
             }
         });

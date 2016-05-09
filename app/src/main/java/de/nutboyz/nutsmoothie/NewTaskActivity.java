@@ -125,25 +125,8 @@ public class NewTaskActivity extends AppCompatActivity {
 
                 if (reminderName.getText().length() == 0) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(NewTaskActivity.this);
-                    dialog.setMessage("You didn't give your task a name! Continue?");
-                    dialog.setPositiveButton("Yes, it doesn't need a name", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (extras == null) {
-                                task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
-
-                                List<NutLocation> nutLocationList = getTaskLocations(task);
-
-                                saveLocationToTask(task, nutLocationList);
-                            }
-                            else {
-                                //Todo
-                            }
-
-                            logout();
-                        }
-                    });
-                    dialog.setNegativeButton("No, add a name", new DialogInterface.OnClickListener() {
+                    dialog.setMessage("You didn't give your task a name!");
+                    dialog.setNegativeButton("Add a name", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -154,15 +137,17 @@ public class NewTaskActivity extends AppCompatActivity {
                 }
 
                 else {
-                    if (extras == null) {
-                        task = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
-
-                        List<NutLocation> nutLocationList = getTaskLocations(task);
-
-                        saveLocationToTask(task, nutLocationList);
+                    if (extras != null) {
+                        Task newTask = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
+                        if (task.getId() != newTask.getId()) {
+                            TaskDataSource taskDataSource = new TaskDataSource(NewTaskActivity.this);
+                            taskDataSource.open();
+                            taskDataSource.deleteTask(task);
+                            taskDataSource.close();
+                        }
                     }
                     else {
-                        //Todo
+                        Task newTask = saveTaskName(reminderName.getText().toString(), seekbar.getProgress());
                     }
 
                     logout();
@@ -214,14 +199,6 @@ public class NewTaskActivity extends AppCompatActivity {
                 logout();
             }
         });
-    }
-
-    public void saveLocationToTask(Task task, List<NutLocation> nutLocationList){
-        TaskLocationsDataSource taskLocationsDataSource = new TaskLocationsDataSource(this);
-
-        for (NutLocation location : nutLocationList) {
-            taskLocationsDataSource.addLocationToTask(task, location);
-        }
     }
 
 

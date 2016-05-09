@@ -81,6 +81,7 @@ public class LocationDataSource {
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE, distance);
         String where = MySQLiteHelper.TABLE_LOCATIONS_COLUMN_ID + "=" + location.getId();
         database.update(MySQLiteHelper.TABLE_LOCATIONS, values, where, null);
+        Log.i(TAG, "Updated location " + location.getName() + " with distance: " + distance);
         return distance;
     }
 

@@ -5,6 +5,7 @@ package de.nutboyz.nutsmoothie.commons;
  */
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,6 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
 
             if (titleView != null) {
                 titleView.setText(t.getName());
-//                Log.i(TAG, t.getName());
             }
 
             if (distanceView != null) {
@@ -61,20 +61,21 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
                 String distanceStr;
                 if (t.getDistance() > 1500) {
                     distance = t.getDistance()/1000.0;
-                    distanceStr = String.format("%.2f", distance) + " km";
+                    distanceStr = String.format("%.1f", distance) + " km";
+                    distanceView.setVisibility(View.VISIBLE);
+                    distanceView.setText(distanceStr);
+                }
+                else if (t.getDistance() == 0) {
+                    distanceStr = "-1";
+                    distanceView.setVisibility(View.INVISIBLE);
                 }
                 else {
                     distance = t.getDistance();
                     distanceStr = (int) distance + " m";
-                }
-                if (t.getDistance() == 0) {
-                    distanceView.setVisibility(View.INVISIBLE);
-                }
-                else {
                     distanceView.setVisibility(View.VISIBLE);
                     distanceView.setText(distanceStr);
                 }
-//                Log.i(TAG, String.valueOf(t.getReminderRange()));
+                Log.i(TAG, distanceStr);
             }
         }
 

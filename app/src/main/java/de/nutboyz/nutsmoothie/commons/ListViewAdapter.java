@@ -22,10 +22,6 @@ public class ListViewAdapter extends ArrayAdapter<Task>{
 
     private final String TAG = getClass().getSimpleName();
 
-    public ListViewAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-    }
-
     public ListViewAdapter(Context context, int resource, List<Task> items) {
         super(context, resource, items);
     }

@@ -24,7 +24,8 @@
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -33,7 +34,7 @@
 
         <EditText
             android:id="@+id/newtask_edtext_task"
-            android:layout_width="329dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:paddingBottom="@dimen/activity_vertical_margin"
@@ -41,7 +42,7 @@
             android:text="" />
 
         <TextView
-            android:layout_width="324dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -71,23 +72,23 @@
             android:layout_gravity="center_horizontal" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:layout_marginTop="@dimen/activity_vertical_margin">
 
             <Button
                 android:id="@+id/newtask_btn_save"
                 android:layout_width="100dp"
                 android:layout_height="70dp"
                 android:text="Save"
+                android:layout_alignParentStart="true"
                 android:textColor="@color/white"/>
 
             <Button
                 android:id="@+id/newtask_btn_addLoc"
                 android:layout_width="100dp"
                 android:layout_height="70dp"
-                android:layout_toEndOf="@id/newtask_btn_save"
-                android:layout_marginLeft="10dp"
+                android:layout_centerHorizontal="true"
                 android:text="Add Location"
                 android:textColor="@color/white"/>
 
@@ -95,19 +96,11 @@
                 android:id="@+id/newtask_btn_cancel"
                 android:layout_width="100dp"
                 android:layout_height="70dp"
-                android:layout_toEndOf="@id/newtask_btn_addLoc"
-                android:layout_marginLeft="10dp"
+                android:layout_alignParentEnd="true"
                 android:text="Cancel"
                 android:textColor="@color/white"/>
 
         </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/newtask_textview"
-            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

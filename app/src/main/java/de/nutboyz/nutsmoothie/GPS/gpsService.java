@@ -44,10 +44,10 @@ public class gpsService extends Service {
     private String locprovider;
     private ArrayList<NutLocation> nutLocations;
     private List<Task> nutTasks;
-    private static final int MIN_ZEIT = 1000*2; //2 Min
-    private static final int MIN_DISTANZ = 100; // or 100 Meter
+    private static final int MIN_ZEIT = 1000*5*60; //2 Min
+    private static final int MIN_DISTANZ = 200; // or 100 Meter
     private final IBinder mGpsBinder = new GeoServiceBinder();
-    private boolean debug = true;
+    private boolean debug = false;
     private Intent mBroadcastReceiver;
 
     @Override

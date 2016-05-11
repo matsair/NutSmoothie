@@ -25,6 +25,10 @@ import de.nutboyz.nutsmoothie.database.LocationDataSource;
 import de.nutboyz.nutsmoothie.database.TaskDataSource;
 import de.nutboyz.nutsmoothie.database.TaskLocationsDataSource;
 
+/**
+ * @author Richard
+ */
+
 public class LocationListActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();

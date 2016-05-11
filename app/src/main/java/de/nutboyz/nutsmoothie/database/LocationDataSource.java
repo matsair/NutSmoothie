@@ -32,6 +32,7 @@ public class LocationDataSource {
         dbHelper = new MySQLiteHelper(context);
     }
 
+
     /**
      * Opens the database. Required before adding and accessing location data.
      * @throws SQLException
@@ -40,12 +41,14 @@ public class LocationDataSource {
         database = dbHelper.getWritableDatabase();
     }
 
+
     /**
      * Closes the database. Should be called when access to DB is no longer needed.
      */
     public void close() {
         dbHelper.close();
     }
+
 
     /**
      * Adds the location to the database and returns the same location, with ID,
@@ -69,13 +72,13 @@ public class LocationDataSource {
         return newLocation;
     }
 
+
     /**
      * Update the distance from the user's current location to the given location.
      * @param location Location to be updated.
      * @param distance The distance to the user's current location.
      * @return The distance
      */
-
     public double updateDistance(NutLocation location, double distance) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.TABLE_LOCATIONS_COLUMN_DISTANCE, distance);
@@ -84,6 +87,7 @@ public class LocationDataSource {
         Log.i(TAG, "Updated location " + location.getName() + " with distance: " + distance);
         return distance;
     }
+
 
     /**
      * Deletes the location from the database. Checks for id.
@@ -95,6 +99,7 @@ public class LocationDataSource {
                 + " = " + locId, null);
         Log.i(TAG, "Location deleted with id: " + locId);
     }
+
 
     /**
      * Returns a list of all locations in the database.
@@ -117,10 +122,11 @@ public class LocationDataSource {
         return locations;
     }
 
+
     /**
      * Returns the location corresponding to the given id.
-     * @param id
-     * @return Location
+     * @param id ID of the location.
+     * @return Location corresponding to the ID.
      */
     public NutLocation getLocationFromId(int id) {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_LOCATIONS,
@@ -133,6 +139,7 @@ public class LocationDataSource {
         cursor.close();
         return location;
     }
+
 
     /**
      * Returns a List of Locations from an Integer List.
@@ -157,6 +164,7 @@ public class LocationDataSource {
         cursor.close();
         return locationList;
     }
+
 
     private NutLocation cursorToLocation(Cursor cursor) {
         NutLocation location = new NutLocation();

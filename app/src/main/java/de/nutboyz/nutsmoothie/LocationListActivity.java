@@ -185,4 +185,15 @@ public class LocationListActivity extends AppCompatActivity {
         adapter.clear();
         populateListView();
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(),
+                NewTaskActivity.class);
+        Log.i(TAG, "Task ID: " + taskId);
+        i.putExtra("task", String.valueOf(taskId));
+        i.putExtra("taskName", taskName);
+        i.putExtra("taskReminderRange", taskReminderRange);
+        startActivity(i);
+    }
 }

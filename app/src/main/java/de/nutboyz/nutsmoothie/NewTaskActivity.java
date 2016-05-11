@@ -80,19 +80,6 @@ public class NewTaskActivity extends AppCompatActivity {
             reminderLocations.setVisibility(View.VISIBLE);
 
             listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, locationList));
-
-//            TaskDataSource taskDataSource = new TaskDataSource(this);
-//            taskDataSource.open();
-//            List<Task> taskList = taskDataSource.getAllTasks();
-//            taskDataSource.close();
-//
-//            for(Task task : taskList){
-//                if(task.getId() == this.task.getId()){
-//                    reminderName = (EditText)findViewById(R.id.newtask_edtext_task);
-//                    reminderName.setText(task.getName());
-//                    seekbar.setProgress(task.getReminderRange());
-//                }
-//            }
         }
         else {
             reminderRange.setText("Reminder range:");
@@ -264,27 +251,15 @@ public class NewTaskActivity extends AppCompatActivity {
         super.onStop();
     }
 
-
-
-/*
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
-
-    save = (Button) findViewById(R.id.buttonHome);
-    save.setOnClickListener(new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-
-            Intent i = new Intent(getApplicationContext(),
-                    HomeActivity.class);
-       //     i.putExtra("myUserId", myUserId);
-            startActivity(i);
+    public void onBackPressed() {
+        if (extras != null) {
+            TaskDataSource taskDataSource = new TaskDataSource(NewTaskActivity.this);
+            taskDataSource.open();
+            taskDataSource.deleteTask(task);
+            taskDataSource.close();
         }
-    });
-*/
 
+        logout();
+    }
 }

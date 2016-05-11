@@ -1,7 +1,7 @@
 package de.nutboyz.nutsmoothie.commons;
 
 /**
- * Created by Jojo on 21/04/16.
+ * @author Johannes Lang
  */
 
 import android.content.Context;

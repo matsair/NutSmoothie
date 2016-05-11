@@ -70,16 +70,6 @@ public class NutLocation {
 
     @Override
     public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("name: ");
-//        sb.append(name);
-//        sb.append(", latitude: ");
-//        sb.append(latitude);
-//        sb.append(", longitude: ");
-//        sb.append(longitude);
-//        sb.append(", locationid: ");
-//        sb.append(id);
-//        return sb.toString();
         return name;
     }
 }

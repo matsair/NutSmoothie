@@ -31,7 +31,6 @@ public class TaskLocationsDataSource {
     }
 
 
-
     /**
      * Opens the database. Required before adding and accessing task location data.
      * @throws SQLException
@@ -40,6 +39,7 @@ public class TaskLocationsDataSource {
         database = dbHelper.getWritableDatabase();
     }
 
+
     /**
      * Closes the database. Should be called when access to DB is no longer needed.
      */
@@ -47,10 +47,11 @@ public class TaskLocationsDataSource {
         dbHelper.close();
     }
 
+
     /**
      * Adds a location to a task.
-     * @param task
-     * @param location
+     * @param task Task, to which the location should be added.
+     * @param location Location, which should be added to the task.
      */
     public void addLocationToTask(Task task, NutLocation location) {
         ContentValues values = new ContentValues();
@@ -59,10 +60,11 @@ public class TaskLocationsDataSource {
         database.insert(MySQLiteHelper.TABLE_TASKLOCATIONS, null, values);
     }
 
+
     /**
      * Deletes a location from a task.
-     * @param task
-     * @param location
+     * @param task Task, from which the location should be deleted.
+     * @param location Location, which should be deleted from task.
      */
     public void deleteLocationFromTask(Task task, NutLocation location) {
         int locId = location.getId();
@@ -73,6 +75,7 @@ public class TaskLocationsDataSource {
                         task.getId(), null);
         Log.i(TAG, "Location " + location.getName() + " deleted from task " + task.getId());
     }
+
 
     /**
      * Returns a list of location ids corresponding to the given task.
@@ -96,6 +99,7 @@ public class TaskLocationsDataSource {
         cursor.close();
         return locationIds;
     }
+
 
     /**
      * Returns a list of location ids corresponding to the given task.

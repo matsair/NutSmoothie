@@ -65,12 +65,14 @@ public class Task {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("name: ");
+        sb.append("taskid: ");
+        sb.append(id);
+        sb.append(", name: ");
         sb.append(name);
         sb.append(", reminder range: ");
         sb.append(reminderRange);
-        sb.append(", taskid: ");
-        sb.append(id);
+        sb.append(", distance: ");
+        sb.append(distance);
         return sb.toString();
     }
 }

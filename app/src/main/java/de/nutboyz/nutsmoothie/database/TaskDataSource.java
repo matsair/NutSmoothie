@@ -30,8 +30,6 @@ public class TaskDataSource {
     }
 
 
-
-
     /**
      * Opens the database. Required before adding and accessing task location data.
      * @throws SQLException
@@ -40,12 +38,14 @@ public class TaskDataSource {
         database = dbHelper.getWritableDatabase();
     }
 
+
     /**
      * Closes the database. Should be called when access to DB is no longer needed.
      */
     public void close() {
         dbHelper.close();
     }
+
 
     /**
      * Adds a task to the database.
@@ -68,6 +68,7 @@ public class TaskDataSource {
         return newTask;
     }
 
+
     /**
      * Deletes a task from the database. Uses its ID as an identifier.
      * @param task Task to be deleted.
@@ -78,6 +79,7 @@ public class TaskDataSource {
         database.delete(MySQLiteHelper.TABLE_TASKS, MySQLiteHelper.TABLE_TASKS_COLUMN_ID
                 + " = " + id, null);
     }
+
 
     /**
      * Returns a List of all Tasks in the database.
@@ -100,6 +102,7 @@ public class TaskDataSource {
         return tasks;
     }
 
+
     /**
      * Returns a List of all Tasks in the database.
      * @return List of Tasks.
@@ -115,6 +118,7 @@ public class TaskDataSource {
         cursor.close();
         return task;
     }
+
 
     private Task cursorToTask(Cursor cursor) {
         Task task = new Task();
